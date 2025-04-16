@@ -7,7 +7,7 @@ const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   return (
-    <nav className="bg-red-900">
+    <nav className="bg-primary">
       <div className="flex justify-between p-4 items-center container mx-auto">
           <div className="flex items-center space-x-6">
             <Link to="/" className="text-xl text-white font-bold">
