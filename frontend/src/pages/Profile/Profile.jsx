@@ -15,7 +15,7 @@ function Profile() {
                 <nav>
                     <ul>
                         <li className="mb-4">
-                            <Link to="#" className="block py-2 px-4 bg-blue-300 text-white rounded shadow-lg">
+                            <Link to="/my/profile" className="block py-2 px-4 bg-primary text-white rounded shadow-lg">
                                 Trang chủ
                             </Link>
                         </li>
@@ -25,7 +25,7 @@ function Profile() {
                             </Link>
                         </li>
                         <li className="mb-4">
-                            <Link to="/my/order" className="block py-2 px-4 text-gray-800 rounded hover:bg-gray-300 hover:shadow-lg hover:-translate-y-1 transform transition-all duration-200">
+                            <Link to="/my/history" className="block py-2 px-4 text-gray-800 rounded hover:bg-gray-300 hover:shadow-lg hover:-translate-y-1 transform transition-all duration-200">
                                 Lịch sử mua hàng
                             </Link>
                         </li>
@@ -37,7 +37,7 @@ function Profile() {
                         <li>
                             <Link 
                               to="/"
-                              className="block py-2 px-4 text-gray-800 rounded hover:bg-red-500 hover:shadow-lg hover:-translate-y-1 transform transition-all duration-200 border-t border-gray-500"
+                              className="block py-2 px-4 text-gray-800 rounded hover:bg-red-500 hover:shadow-lg hover:-translate-y-1 hover:text-white transform transition-all duration-200 border-t border-gray-500"
                               onClick={() => {
                                 setDropdownOpen(false)
                                 setIsLoggedIn(false);

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import MainLayout from './layouts/MainLayouts/MainLayouts';
 import Home from './pages/Home/Home';
 import Profile from './pages/Profile/Profile.jsx';
+import Myaccount from './pages/MyAccount/My-account.jsx';
 import './App.css'
 
 function App() {
@@ -14,6 +15,9 @@ function App() {
         </Route>
         <Route path="/my/profile" element={<MainLayout />}>
           <Route index element={<Profile />} />
+        </Route>
+        <Route path="/my/account" element={<MainLayout />}>
+          <Route index element={<Myaccount />} />
         </Route>
       </Routes>
     </BrowserRouter>
