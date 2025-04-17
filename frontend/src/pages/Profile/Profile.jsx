@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom"
 import Header from "../../components/Header/Header";
-import avatar from '../../asset/images/avatar.png';
 
 function Profile() {
   const username = "User1";
   const email = "user1@example.com";
+  const avatar = "/asset/images/avatar.png"
 
   return (
     <div className="bg-gray-100">

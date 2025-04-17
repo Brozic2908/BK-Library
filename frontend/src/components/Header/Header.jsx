@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaUser, FaSearch, FaHistory, FaLock, FaSignOutAlt } from "react-icons/fa";
-import avatar from '../../asset/images/avatar.png';
 
 const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -10,7 +9,7 @@ const Header = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const username = "User1";
   const email = "user1@example.com";
-
+  const avatar = "/asset/images/avatar.png"
   return (
     <nav className="bg-primary sticky top-0 z-50">
       <div className="flex justify-between p-4 items-center container mx-auto max-w-screen-1200">
@@ -26,7 +25,7 @@ const Header = () => {
             <Link to="/" className="text-base text-white hidden md:block hover:underline">
               Trang chủ
             </Link>
-            <Link to="/history" className="text-base text-white hidden md:block hover:underline">
+            <Link to="/my/history" className="text-base text-white hidden md:block hover:underline">
               Lịch sử mua hàng
             </Link>
           </div>
@@ -75,7 +74,7 @@ const Header = () => {
                         </li>
                         <li>
                           <Link 
-                            to="/history"
+                            to="/my/history"
                             className="px-3 py-2 hover:bg-gray-200 cursor-pointer rounded-lg flex gap-1 items-center"
                             onClick={() => setDropdownOpen(false)}
                           >

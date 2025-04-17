@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom"
+import React, { useEffect, useState } from 'react';
 import Header from "../../components/Header/Header";
-import avatar from '../../asset/images/avatar.png';
 
 function Myaccount() {
   const username = "User1";
   const email = "user1@example.com";
-
+  const [Name, setName] = useState('Nguyễn Văn A');
+  
   return (
     <div className="bg-gray-100">
       <div className="overflow-y-auto">
@@ -59,7 +60,8 @@ function Myaccount() {
                                 <label htmlFor="full-name" className="block text-gray-700 font-semibold mb-2">Họ và Tên</label>
                                 <input type="text" id="full-name" 
                                     class="block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" 
-                                    value="" 
+                                    value={Name} 
+                                    onChange={e => setName(e.target.value)}
                                 />
                             </div>
                             <div className="flex-1">

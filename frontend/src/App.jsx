@@ -4,6 +4,9 @@ import MainLayout from './layouts/MainLayouts/MainLayouts';
 import Home from './pages/Home/Home';
 import Profile from './pages/Profile/Profile.jsx';
 import Myaccount from './pages/MyAccount/My-account.jsx';
+import History from './pages/History/History.jsx';
+import Support from './pages/Support/Support.jsx';
+
 import './App.css'
 
 function App() {
@@ -18,6 +21,12 @@ function App() {
         </Route>
         <Route path="/my/account" element={<MainLayout />}>
           <Route index element={<Myaccount />} />
+        </Route>
+        <Route path="/my/history" element={<MainLayout />}>
+          <Route index element={<History />} />
+        </Route>
+        <Route path="/my/support" element={<MainLayout />}>
+          <Route index element={<Support />} />
         </Route>
       </Routes>
     </BrowserRouter>
