@@ -16,4 +16,4 @@ frontend/
 ├── vite.config.js           # Cấu hình Vite
 ├── package.json             # Khai báo thư viện và script
 ├── .gitignore               # Bỏ qua file/thư mục khi commit
-└── README.md                # Tài liệu mô tả dự án
+└── README.md                # Tài liệu mô tả 
