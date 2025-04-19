@@ -1,19 +1,29 @@
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import MainLayout from './layouts/MainLayouts/MainLayouts';
-import Home from './pages/Home/Home';
-import './App.css'
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-function App() {
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Suggestions from "./components/Suggestions";
+
+import ReactNote from "./components/ReactNote"; // React Native
+import Blockchain from "./components/BlockChain";
+import TiengAnh from "./components/TiengAnh";
+import Word from "./components/Word";
+
+export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Home />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  )
+    <Router>
+      <div className="bg-white text-gray-800 font-sans">
+        <Header />
+        <Routes>
+          <Route path="/" element={<ReactNote />} />
+          <Route path="/blockchain" element={<Blockchain />} />
+          <Route path="/tienganh" element={<TiengAnh />} />
+          <Route path="/word" element={<Word />} />
+        </Routes>
+        <Suggestions />
+        <Footer />
+      </div>
+    </Router>
+  );
 }
-
-export default App
