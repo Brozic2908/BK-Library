@@ -30,7 +30,7 @@ export default function RegisterPage() {
       </div>
 
       {/* Right Panel */}
-      <div className="w-1/2 bg-[#f3f5f5] flex flex-col justify-center px-20 relative">
+      <div className="w-3/5 bg-[#f3f5f5] flex flex-col justify-center px-20 relative">
         {/* Top Links */}
         <div className="flex justify-between text-sm mb-6 absolute top-4 left-6 right-6">
           <a href="/" className="text-gray-600 hover:underline flex items-center gap-1">
@@ -107,7 +107,7 @@ export default function RegisterPage() {
           <span className="italic">ⓘ Cần giúp đỡ?</span>
         </div>
         {/* Footer Copyright */}
-        <footer className="absolute bottom-8 left-6 text-sm opacity-60 w-full">
+        <footer className="absolute bottom-8 left-6 text-sm opacity-60 w-2/5">
           Copyright 2025 BK Library Inc. All rights Reserved
         </footer>
       </div>
