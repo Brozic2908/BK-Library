@@ -1,9 +1,5 @@
-import "@fortawesome/fontawesome-free/css/all.min.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MainLayout from "./layouts/MainLayouts/MainLayouts";
-import Home from "./pages/Home/Home";
-import LoginPage from "./pages/Login/login";
-import RegisterPage from "./pages/Register/register";
+import LoginPage from "./pages/login.jsx";
+import RegisterPage from "./pages/register.jsx";
 import "./App.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -21,23 +17,15 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<RegisterPage />} />
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<RegisterPage />} />
           <Route path="book-detail/:id" element={<BookDetail />} />
-        </Route>
-        <Route path="/my/profile" element={<MainLayout />}>
-          <Route index element={<Profile />} />
-        </Route>
-        <Route path="/my/account" element={<MainLayout />}>
-          <Route index element={<Myaccount />} />
-        </Route>
-        <Route path="/my/history" element={<MainLayout />}>
-          <Route index element={<History />} />
-        </Route>
-        <Route path="/my/support" element={<MainLayout />}>
-          <Route index element={<Support />} />
+          <Route path="/my/profile" element={<Profile />} />
+          <Route path="/my/account" element={<Myaccount />} />
+          <Route path="/my/history" element={<History />} />
+          <Route path="/my/support" element={<Support />} />
         </Route>
       </Routes>
     </BrowserRouter>
