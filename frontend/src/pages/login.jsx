@@ -100,7 +100,7 @@ export default function LoginPage() {
           <span className="italic">ⓘ Cần giúp đỡ?</span>
         </div>
         {/* Footer Copyright */}
-        <footer className="absolute bottom-8 left-6 text-sm opacity-60 w-full">
+        <footer className="absolute bottom-8 left-6 text-sm opacity-60 w-2/5">
           Copyright 2025 BK Library Inc. All rights Reserved
         </footer>
       </div>
