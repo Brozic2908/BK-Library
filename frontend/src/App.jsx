@@ -1,11 +1,12 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MainLayout from "./layouts/MainLayouts/MainLayouts";
-import Home from "./pages/Home/Home";
-import Profile from "./pages/Profile/Profile.jsx";
-import Myaccount from "./pages/MyAccount/My-account.jsx";
-import History from "./pages/History/History.jsx";
-import Support from "./pages/Support/Support.jsx";
+import MainLayout from "./layouts/MainLayouts";
+import Home from "./pages/Home";
+import Profile from "./pages/Profile.jsx";
+import Myaccount from "./pages/My-account.jsx";
+import History from "./pages/History.jsx";
+import Support from "./pages/Support.jsx";
+import BookDetail from "./pages/BookDetail.jsx";
 
 import "./App.css";
 
