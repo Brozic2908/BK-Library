@@ -1,42 +1,53 @@
 import React from "react";
 
-export default function BookBlockchain() {
+export default function BlockChain() {
   return (
-    <main className="max-w-6xl mx-auto py-10 px-4 grid grid-cols-1 md:grid-cols-3 gap-10">
-      <div className="md:col-span-1">
-        <img
-          src="/images/book2.jpg"
-          alt="Blockchain Cơ Bản"
-          className="rounded shadow-md w-full"
-        />
+    <main className="max-w-6xl mx-auto py-10 px-4 space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
+        <div className="md:col-span-1">
+          <img
+            src="/images/book2.jpg"
+            alt="Blockchain Cơ Bản"
+            className="rounded shadow-md w-full"
+          />
+        </div>
+
+        <div className="md:col-span-2 space-y-4">
+          <h1 className="text-2xl font-bold">Blockchain Cơ Bản</h1>
+          <div className="flex items-center space-x-1 text-yellow-400 text-lg">
+            ⭐⭐⭐⭐
+          </div>
+          <ul className="text-sm space-y-1">
+            <li>
+              <strong>Thể loại:</strong> Công nghệ
+            </li>
+            <li>
+              <strong>Tác giả:</strong> Nhiều tác giả
+            </li>
+            <li>
+              <strong>Nhà xuất bản:</strong> NA
+            </li>
+            <li>
+              <strong>Số trang:</strong> 450 trang
+            </li>
+            <li>
+              <strong>Năm xuất bản:</strong> NA
+            </li>
+            <li>
+              <strong>Ngôn ngữ:</strong> Tiếng Việt
+            </li>
+          </ul>
+          <button className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded">
+            Đặt ngay
+          </button>
+        </div>
       </div>
 
-      <div className="md:col-span-2 space-y-4">
-        <h1 className="text-2xl font-bold">Blockchain Cơ Bản</h1>
-        <div className="flex items-center space-x-1 text-yellow-400 text-lg">
-          ⭐⭐⭐⭐☆
-        </div>
-        <ul className="text-sm space-y-1">
-          <li>
-            <strong>Thể loại:</strong> Học thuật
-          </li>
-          <li>
-            <strong>Tác giả:</strong> Daniel Drescher
-          </li>
-          <li>
-            <strong>Nhà xuất bản:</strong> Dân Trí
-          </li>
-          <li>
-            <strong>Số trang:</strong> 375 trang
-          </li>
-          <li>
-            <strong>Năm xuất bản:</strong> 2023
-          </li>
-          <li>
-            <strong>Ngôn ngữ:</strong> Tiếng Việt
-          </li>
-        </ul>
-        <p className="text-sm">
+      <hr className="border-t border-gray-300" />
+
+      <section>
+        <h2 className="text-xl font-semibold mb-2">Mô tả</h2>
+        <p className="text-sm text-justify leading-relaxed">
           CÙNG TÌM HIỂU VỀ BLOCKCHAIN - THỨ ĐÃ, ĐANG VÀ SẼ KHIẾN THẾ GIỚI CÔNG
           NGHỆ THAY ĐỔI HOÀN TOÀN! Blockchain là gì? Tại sao nó xuất hiện? Chúng
           ta có cần hiểu blockchain? Và liệu một người kém công nghệ như tôi có
@@ -51,10 +62,9 @@ export default function BookBlockchain() {
           kỹ thuật và thuần thương mại của blockchain bằng những khái niệm nền
           tảng có thể áp dụng cho nhiều lĩnh vực trong tương lai.
         </p>
-        <button className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded">
-          Đặt ngay
-        </button>
-      </div>
+      </section>
+
+      <hr className="border-t border-gray-300" />
     </main>
   );
 }
