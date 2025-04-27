@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import Header from "../components/Header/Header";
 
 function Myaccount() {
   const username = "User1";
