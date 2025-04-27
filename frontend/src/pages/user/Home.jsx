@@ -1,13 +1,13 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import BookCard from "../components/BookCard/BookCard";
+import BookCard from "../../components/BookCard/BookCard";
 
 // image
-import homeImg from "../assets/img/home/home_img.avif";
-import react_native_img from "../assets/img/books/react_native_img.png";
-import lam_chu_kien_thuc_tieng_anh_img from "../assets/img/books/lam_chu_kien_thuc_tieng_anh_img.png";
-import blockchain_img from "../assets/img/books/blockchain_img.png";
-import khoa_hoc_tin_phong from "../assets/img/books/khoa_hoc_tin_phong.png";
+import homeImg from "../../assets/img/home/home_img.avif";
+import react_native_img from "../../assets/img/books/react_native_img.png";
+import lam_chu_kien_thuc_tieng_anh_img from "../../assets/img/books/lam_chu_kien_thuc_tieng_anh_img.png";
+import blockchain_img from "../../assets/img/books/blockchain_img.png";
+import khoa_hoc_tin_phong from "../../assets/img/books/khoa_hoc_tin_phong.png";
 
 const Home = () => {
   const navigate = useNavigate();
