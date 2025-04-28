@@ -17,7 +17,7 @@ import Myaccount from "./pages/user/My-account.jsx";
 import History from "./pages/user/History.jsx";
 import Support from "./pages/user/Support.jsx";
 import BookDetail from "./pages/user/BookDetail.jsx";
-
+import AllBooks from "./pages/user/AllBooks.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
 import "./App.css";
@@ -34,6 +34,7 @@ function App() {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />
           <Route path="book-detail/:id" element={<BookDetail />} />
+          <Route path="all-books" element={<AllBooks />} />
           <Route path="/my/profile" element={<Profile />} />
           <Route path="/my/account" element={<Myaccount />} />
           <Route path="/my/history" element={<History />} />
