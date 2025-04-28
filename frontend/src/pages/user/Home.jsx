@@ -95,10 +95,10 @@ const Home = () => {
         </div>
 
         {/* See More Button */}
-        <div className="flex justify-center mt-12">
+        <div className="flex justify-center mt-6">
           <button
-            onClick={goToAllBooks}
-            className="bg-primary border-2 border-primary text-white font-medium px-8 py-2 rounded-md hover:text-primary hover:border-primary hover:border-2 hover:bg-white transition duration-300"
+            onClick={() => navigate("/all-books")}
+            className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-300"
           >
             Xem thêm
           </button>
