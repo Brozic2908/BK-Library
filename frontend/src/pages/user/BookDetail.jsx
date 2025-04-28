@@ -101,7 +101,7 @@ export default function BookDetail() {
               {book.publisher || "Không rõ"}
             </p>
 
-            <hr className="my-4 md:my-6" />
+            <hr className="my-8 border-red-300" />
 
             <h2 className="text-xl md:text-2xl font-semibold mb-3">Mô tả</h2>
             <p className="text-gray-700 leading-relaxed mb-8 text-sm md:text-base">
@@ -123,6 +123,8 @@ export default function BookDetail() {
             </button>
           </div>
         </div>
+        
+        <hr className="my-8 border-red-300" />
 
         {/* Gợi ý sách */}
         <div className="mt-16">
