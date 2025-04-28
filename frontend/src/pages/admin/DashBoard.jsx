@@ -1,41 +1,32 @@
-// pages/admin/Dashboard.jsx
-import { Users, BookOpen, RepeatIcon } from "lucide-react";
-
-const StatCard = ({ title, value, icon, color }) => (
-  <div
-    className={` text-white rounded-lg shadow-lg p-6 flex items-center ${color}`}
-  >
-    <div className={`mx-4`}>{icon}</div>
-    <div className="ml-6">
-      <p className="font-medium">{title}</p>
-      <p className="text-2xl font-semibold">{value}</p>
-    </div>
-  </div>
-);
+import React from "react";
+import { users } from "../../data/Books/Users";
+import { books } from "../../data/Books/Books";
+import { transactions } from "../../data/Books/Transactions";
 
 const Dashboard = () => {
+  const totalUsers = users.length;
+  const totalBooks = books.length;
+  const totalTransactions = transactions.length;
+
   return (
-    <div className="space-y-6">
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <StatCard
-          title="Tổng người dùng"
-          value="120"
-          icon={<Users size={30} className="text-white" />}
-          color="bg-blue-700"
-        />
-        <StatCard
-          title="Số sản phẩm"
-          value="120"
-          icon={<BookOpen size={30} className="text-white" />}
-          color="bg-[#4017bb]"
-        />
-        <StatCard
-          title="Số giao dịch"
-          value="1,000"
-          icon={<RepeatIcon size={30} className="text-white" />}
-          color="bg-green-700"
-        />
+    <div className="p-6 space-y-6">
+      <h1 className="text-2xl font-bold mb-4">Bảng điều khiển</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-green-500 text-white p-6 rounded-2xl shadow-lg">
+          <h2 className="text-lg font-semibold">Tổng người dùng:</h2>
+          <p className="text-3xl font-bold">{totalUsers}</p>
+        </div>
+
+        <div className="bg-purple-600 text-white p-6 rounded-2xl shadow-lg">
+          <h2 className="text-lg font-semibold">Số sản phẩm:</h2>
+          <p className="text-3xl font-bold">{totalBooks}</p>
+        </div>
+
+        <div className="bg-green-900 text-white p-6 rounded-2xl shadow-lg">
+          <h2 className="text-lg font-semibold">Số giao dịch:</h2>
+          <p className="text-3xl font-bold">{totalTransactions}</p>
+        </div>
       </div>
     </div>
   );
