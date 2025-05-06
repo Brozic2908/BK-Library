@@ -1,14 +1,16 @@
 // authRoutes.js        # Định tuyến xác thực
 const express = require("express");
+const authController = require("../controllers/authController");
+const { protect } = require("../middlewares/auth");
 const router = express.Router();
 
-// Định nghĩa các route xác thực ở đây
-router.post("/login", (req, res) => {
-  res.status(200).json({ message: "Login route" });
-});
+// Đăng nhập
+router.post("/login", authController.login);
 
-router.post("/register", (req, res) => {
-  res.status(200).json({ message: "Register route" });
-});
+// Đăng ký người dùng mới
+router.post("/register", authController.register);
+
+// Update mất khẩu mới
+router.patch("/updatePassword", protect, authController.updatePassword);
 
 module.exports = router;

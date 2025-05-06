@@ -4,7 +4,7 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const cors = require("cors");
 const routes = require("./routes");
-// const errorHandler = require("./middlewares/errorHandler");
+const errorHandler = require("./middlewares/errorHandler");
 require("dotenv").config();
 
 // Khởi tạo ứng dụng Express
@@ -36,15 +36,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// fix Xử lý route không tồn tại
-// app.all("*", (req, res) => {
-//   res.status(404).json({
-//     status: "fail",
-//     message: `Không tìm thấy đường dẫn: ${req.originalUrl} trên máy chủ này!`,
-//   });
-// });
-
 // Middleware xử lý lỗi
-// app.use(errorHandler);
+app.use(errorHandler);
 
 module.exports = app;
