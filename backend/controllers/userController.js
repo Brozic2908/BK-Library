@@ -48,7 +48,7 @@ exports.getUserById = async (req, res, next) => {
 // Cập nhật thông tin người dùng
 exports.updateUser = async (req, res, next) => {
   try {
-    const { name, email, password, phone, address, gender } = req.body;
+    const { name, email, phone, address, gender } = req.body;
 
     const user = await User.findByPk(req.params.id);
 
@@ -63,7 +63,6 @@ exports.updateUser = async (req, res, next) => {
     await user.update({
       name: name || user.name,
       email: email || user.email,
-      password: password || user.password,
       phone: phone || user.phone,
       address: address || user.address,
       gender: gender || user.gender,
@@ -81,7 +80,7 @@ exports.updateUser = async (req, res, next) => {
 };
 
 // Cập nhật thông tin của người dùng (chỉ admin)
-exports.updateUser = async (req, res, next) => {
+exports.updateUserByAdmin = async (req, res, next) => {
   try {
     const { name, email, phone, address, gender, role, acc_state } = req.body;
 

@@ -7,7 +7,7 @@ const errorHandler = (err, req, res, next) => {
   console.error(err);
 
   // Lỗi do Sequelize
-  if (err.message === "SequelizeValidationError") {
+  if (err.name === "SequelizeValidationError") {
     const message = Object.values(err.errors).map((val) => val.message);
     error.message = message.join(", ");
     return res.status(400).json({

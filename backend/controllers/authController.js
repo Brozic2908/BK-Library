@@ -1,11 +1,11 @@
 // authController.js: Xử lý đăng nhập, đăng ký
 const jwt = require("jsonwebtoken");
 const { User } = require("../models");
-const { emit } = require("../app");
+require("dotenv").config();
 
 // Tạo JWT Token
 const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SERSET, {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
@@ -67,7 +67,7 @@ exports.login = async (req, res, next) => {
     const user = await User.findOne({ where: { email } });
 
     // Kiểm tra người dùng và mật khẩu có đúng không
-    if (!user && !(await user.matchPassword(password))) {
+    if (!user || !(await user.matchPassword(password))) {
       return res.status(401).json({
         status: "fail",
         message: "Email hoặc mật khẩu không đúng",

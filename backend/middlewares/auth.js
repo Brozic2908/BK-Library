@@ -1,6 +1,7 @@
 // middleware/auth.js: Middleware xác thực người dùng
 const jwt = require("jsonwebtoken");
 const { User } = require("../models");
+require("dotenv").config();
 
 exports.protect = async (req, res, next) => {
   let token;
@@ -8,7 +9,7 @@ exports.protect = async (req, res, next) => {
   // Kiểm tra token từ header Authorization
   if (
     req.headers.authorization &&
-    req.headers.authorization.startWith("Bearer")
+    req.headers.authorization.startsWith("Bearer")
   ) {
     token = req.headers.authorization.split(" ")[1];
   }

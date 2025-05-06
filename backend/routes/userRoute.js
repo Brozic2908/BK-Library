@@ -9,7 +9,11 @@ router.use(protect);
 // Routes dành cho admin
 router.get("/", restrictTo("Admin"), userController.getAllUsers);
 router.get("/:id", restrictTo("Admin"), userController.getUserById);
-router.patch("/:id/update", restrictTo("Admin"), userController.updateUser);
+router.patch(
+  "/:id/update",
+  restrictTo("Admin"),
+  userController.updateUserByAdmin
+);
 
 // Routes cho người dùng cập nhật thông tin cá nhân hoặc admin có thể cập nhật cho người dùng
 router.patch("/:id", userController.updateUser);
