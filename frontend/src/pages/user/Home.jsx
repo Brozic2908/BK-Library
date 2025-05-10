@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import BookCard from "../../components/BookCard/BookCard";
 
@@ -10,36 +10,28 @@ import blockchain_img from "../../assets/img/books/blockchain_img.png";
 import khoa_hoc_tin_phong from "../../assets/img/books/khoa_hoc_tin_phong.png";
 
 const Home = () => {
+  const [randomBooks, setRandomBooks] = useState([]);
   const navigate = useNavigate();
+  const id = 1; // Giả sử id là 1
 
-  // Mock data for books
-  const books = [
-    {
-      id: 1,
-      title: "React Native Notes For Professionals",
-      image: react_native_img,
-      category: "programming",
-    },
-    {
-      id: 2,
-      title: "Làm chủ kiến thức tiếng anh từ cơ bản đến Success",
-      image: lam_chu_kien_thuc_tieng_anh_img,
-      category: "language",
-    },
-    {
-      id: 3,
-      title: "Khóa học Blockchain từ A đến Z",
-      image: blockchain_img,
-      category: "technology",
-    },
-    {
-      id: 4,
-      title:
-        "Khóa học tin học văn phòng Word Excel Powerpoint từ cơ bản đến nâng cao",
-      image: khoa_hoc_tin_phong,
-      category: "office",
-    },
-  ];
+  useEffect(() => {
+    // Lây thông tin sách theo id
+    const foundBook = books.find((b) => b.id === parseInt(id)); 
+    setBook(foundBook);
+
+    // Lấy 4 sách ngẫu nhiên (trừ sách đang xem)
+    const fetchRandomBooks = async () => {
+      try {
+        const response = await fetch(`/api/random-books?exclude=${id}`);
+        const data = await response.json();
+        setRandomBooks(data); 
+      } catch (error) {
+        console.error("Error fetching random books:", error);
+      }
+    };
+
+    fetchRandomBooks();
+  }, [id]); // chạy lại khi `id` thay đổi
 
   const goToBookDetail = (bookId) => {
     navigate(`/book-detail/${bookId}`);
@@ -71,27 +63,28 @@ const Home = () => {
         </div>
       </div>
 
-      {/* New Materials Section */}
+      {/* Random Books Section */}
       <div className="mb-8">
         <h2 className="text-center text-primary font-medium text-lg mb-2">
           KHÁM PHÁ NGAY
         </h2>
-        <h3 className="text-center text-3xl font-bold mb-4">TÀI LIỆU MỚI</h3>
+        <h3 className="text-center text-3xl font-bold mb-4">SÁCH NGẪU NHIÊN</h3>
         <p className="text-center text-gray-600 mb-8">
-          Tham khảo các tài liệu được bổ sung gần đây
+          Tham khảo các sách ngẫu nhiên được gợi ý
         </p>
 
         {/* Book Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 items-start">
-          {books.map((book) => (
-            <BookCard
-              key={book.id}
-              className="cursor-pointer"
-              title={book.title}
-              image={book.image}
-              onClick={() => goToBookDetail(book.id)}
-            />
-          ))}
+          {randomBooks.length > 0 &&
+            randomBooks.map((book) => (
+              <BookCard
+                key={book.id}
+                className="cursor-pointer"
+                title={book.title}
+                image={book.image}
+                onClick={() => goToBookDetail(book.id)}
+              />
+            ))}
         </div>
 
         {/* See More Button */}

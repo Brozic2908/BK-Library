@@ -19,6 +19,7 @@ export const books = [
     publisher: "Goalkicker.com",
     category: "Lập trình",
     publishedYear: 2024,
+    quantity: 5,
     cover: reactNativeImg,
     description: `React Native Notes for Professionals là một cuốn sách tổng hợp kiến
           thức về React Native, được biên soạn từ các tài liệu trên Stack
@@ -35,6 +36,7 @@ export const books = [
     publisher: "NXB Hà Nội",
     category: "Công nghệ",
     publishedYear: 2023,
+    quantity: 5,
     cover: blockchainImg,
     description: `CÙNG TÌM HIỂU VỀ BLOCKCHAIN - THỨ ĐÃ, ĐANG VÀ SẼ KHIẾN THẾ GIỚI CÔNG NGHỆ THAY ĐỔI HOÀN TOÀN!
 Blockchain là gì? Tại sao nó xuất hiện? Chúng ta có cần hiểu blockchain? Và liệu một người kém công nghệ như tôi có thể dễ dàng nắm bắt được nó hay không?
@@ -48,6 +50,7 @@ Tác giả Drescher đã xây dựng cây cầu nối giữa hai khía cạnh th
     publisher: "NXB Giáo Dục Việt Nam",
     category: "Giáo trình học tập",
     publishedYear: 2022,
+    quantity: 5,
     cover: lamChuTiengAnhImg,
     description: `
 Cuốn sách "Làm Chủ Kiến Thức Tiếng Anh 10 Global Success" được xây dựng theo đường hướng giao tiếp, giúp học sinh hình thành và phát triển năng lực giao tiếp thông qua rèn luyện bốn kỹ năng nghe, nói, đọc, viết và các kiến thức ngôn ngữ bao gồm ngữ âm, từ vựng, ngữ pháp theo khung chương trình. Sau khi kết thúc chương trình Tiếng Anh 10, học sinh có thể đạt được trình độ Bậc 3-1 theo Khung năng lực ngoại ngữ 6 bậc dành cho Việt Nam`,
@@ -59,6 +62,7 @@ Cuốn sách "Làm Chủ Kiến Thức Tiếng Anh 10 Global Success" được x
     publisher: "NXB Thông tin và Truyền thông",
     category: "Tin học văn phòng",
     publishedYear: 2023,
+    quantity: 5,
     cover: wordImg,
     description: `Thành thạo tin học văn phòng trong đó giỏi soạn thảo văn bản Word là một lợi thế rất lớn khi đi làm. Trong hơn 10 năm triển khai đào tạo cho hàng nghìn học viên từ sinh viên đến nhân viên văn phòng các công ty tập đoàn, tôi đã đúc kết lại các kiến thức đang được ứng dụng trong thực tế để cho ra cuốn sách Word ứng dụng văn phòng từ cơ bản đến nâng cao.
 Đặc biệt cuốn sách sẽ có kèm theo tài liệu bài tập thực hành để bạn có thể tự học theo lộ trình của cuốn sách giúp đạt hiệu quả và trải nghiệm tốt hơn khi tự học tại nhà.
@@ -71,6 +75,7 @@ Với khát vọng mong muốn giúp cho hàng triệu người Việt Nam có t
     publisher: "O'Reilly Media",
     category: "Lập trình",
     publishedYear: 2021,
+    quantity: 5,
     cover: pythonImg,
     description: `Cuốn sách "Python Cơ Bản và Nâng Cao" (Learning Python) của Mark Lutz là tài liệu toàn diện giúp bạn làm chủ ngôn ngữ Python từ những bước cơ bản nhất đến các kỹ thuật lập trình phức tạp. Với hơn 1500 trang chi tiết, sách hướng dẫn bạn cách khai thác Python qua các chủ đề như cấu trúc dữ liệu, lập trình hướng đối tượng, quản lý module, xử lý file, đồng thời khám phá thêm các chủ đề hiện đại như generator, decorator, context manager. Đây là cuốn sách lý tưởng dành cho cả người mới bắt đầu lẫn lập trình viên nhiều kinh nghiệm mong muốn nâng cao kỹ năng chuyên sâu về Python.`,
   },
@@ -81,6 +86,7 @@ Với khát vọng mong muốn giúp cho hàng triệu người Việt Nam có t
     publisher: "Pearson",
     category: "Công nghệ",
     publishedYear: 2020,
+    quantity: 5,
     cover: aiImg,
     description: `Cuốn sách "Trí Tuệ Nhân Tạo: Cách Tiếp Cận Hiện Đại" (Artificial Intelligence: A Modern Approach) của Stuart Russell và Peter Norvig được xem là giáo trình tiêu chuẩn toàn cầu về AI. Sách cung cấp kiến thức từ nền tảng như tìm kiếm, suy luận logic, học máy cho đến các chủ đề nâng cao như thị giác máy tính, xử lý ngôn ngữ tự nhiên và robot học. Được biên soạn công phu, kèm theo hàng trăm bài tập thực hành, đây là tài liệu không thể thiếu cho những ai mong muốn hiểu sâu và áp dụng trí tuệ nhân tạo trong thế giới hiện đại.`,
   },
@@ -91,6 +97,7 @@ Với khát vọng mong muốn giúp cho hàng triệu người Việt Nam có t
     publisher: "NXB Lao Động",
     category: "Kinh doanh",
     publishedYear: 2022,
+    quantity: 5,
     cover: marketingImg,
     description: `"Nguyên lý Marketing" (Principles of Marketing) của Philip Kotler là cuốn sách kinh điển dành cho những ai muốn xây dựng nền tảng vững chắc về tiếp thị. Sách trình bày chi tiết về hành vi khách hàng, chiến lược sản phẩm, xây dựng thương hiệu, định giá, phân phối và quảng bá. Thông qua những ví dụ thực tiễn từ các thương hiệu nổi tiếng toàn cầu, sách giúp người đọc không chỉ nắm lý thuyết mà còn biết cách ứng dụng hiệu quả trong môi trường kinh doanh hiện đại, đáp ứng nhu cầu thị trường luôn thay đổi.`,
   },
@@ -101,6 +108,7 @@ Với khát vọng mong muốn giúp cho hàng triệu người Việt Nam có t
     publisher: "NXB Trẻ",
     category: "Kinh doanh",
     publishedYear: 2019,
+    quantity: 5,
     cover: startupImg,
     description: `"Khởi Nghiệp Tinh Gọn" (The Lean Startup) của Eric Ries mang đến phương pháp tiếp cận mới trong việc khởi nghiệp và phát triển sản phẩm. Thay vì theo đuổi những kế hoạch dài hạn thiếu linh hoạt, sách đề xuất mô hình thử nghiệm liên tục, đo lường phản hồi thực tế và học hỏi nhanh chóng từ thị trường. Bằng cách áp dụng tư duy tinh gọn, các doanh nghiệp có thể tiết kiệm nguồn lực, giảm thiểu rủi ro thất bại và tối ưu hóa tốc độ đổi mới sáng tạo, từ đó tăng khả năng thành công trong những thị trường cạnh tranh khốc liệt ngày nay.`,
   },
@@ -111,6 +119,7 @@ Với khát vọng mong muốn giúp cho hàng triệu người Việt Nam có t
     publisher: "NXB Dân trí",
     category: "Lập trình",
     publishedYear: 2023,
+    quantity: 5,
     cover: cleanCodeImg,
     description: `Hiện nay, lập trình viên là một trong những nghề nghiệp được nhiều người lựa chọn theo đuổi và gắn bó. Đây là công việc đòi hỏi sự tỉ mỉ, nhiều công sức nhưng mang lại giá trị cao và một tương lai công việc hứa hẹn. Là một trong số những chuyên gia giàu kinh nghiệm, điêu luyện và lành nghề trong ngành, tác giả đã đúc rút từ kinh nghiệm của mình, viết về những tình huống trong thực tế, đôi khi có thể trái ngược với lý thuyết để xây dựng nên cuốn cẩm nang này, nhằm hỗ trợ những người đang muốn trở thành một lập trình viên chuyên nghiệp.
 
@@ -125,6 +134,7 @@ Cuốn sách được chia thành ba phần lớn. Phần đầu tiên mô tả 
     publisher: "NXB Công Thương",
     category: "Kỹ năng làm việc",
     publishedYear: 2021,
+    quantity: 5,
     cover: deepWorkImg,
     description: `Đã bao giờ bạn ngồi xuống để làm việc và sau đó, không hề nhận ra mình lại kết thúc bằng việc dành một (vài) tiếng đồng hồ lướt Youtube, Facebook, tin tức? Tất cả chúng ta đều đã từng làm vậy. Có vẻ như có quá nhiều thứ lôi kéo sự chú ý của chúng ta trong thời đại này, nên rất khó để thậm chí đạt đến trạng thái tinh thần giúp hoàn thành công việc một cách tốt nhất. Trong Làm ra làm chơi ra chơi, tác giả Cal Newport nhấn mạnh chủ đề “làm việc sâu” (deep work) đang ngày càng được chú trọng. Học cách làm thế nào để làm việc sâu – khả năng tập trung vào một nhiệm vụ khó nhằn mà không hề bị sao lãng – là chìa khóa để tạo ra những kết quả tốt hơn trong thời gian ngắn hơn. Cuốn sách đưa ra hai mục tiêu, được chia làm hai phần. Phần 1 nhằm thuyết phục bạn rằng giả thiết về làm việc sâu là đúng. Phần 2 giới thiệu đến bạn một số cách để tận dụng làm việc sâu bằng cách rèn luyện não bộ và chuyển đổi thói quen làm việc sang hướng đặt làm việc sâu ở trung tâm sự nghiệp.`,
   },
@@ -135,6 +145,7 @@ Cuốn sách được chia thành ba phần lớn. Phần đầu tiên mô tả 
     publisher: "NXB Lao Động",
     category: "Phát triển bản thân",
     publishedYear: 2022,
+    quantity: 5,
     cover: powerOfHabitImg,
     description: `Về cơ bản, người lớn và trẻ em không khác nhau là mấy. Bởi hầu hết những hành động hàng ngày của chúng ta đều là sản phẩm của thói quen vô thức. Thế nhưng không phải cá nhân, tổ chức nào cũng có được thành công. Đó là vì mỗi người có những thói quen riêng. Vậy thói quen nào mới giúp bạn thành công? Trong cuốn sách “Sức mạnh của thói quen”, Charles Duhigg sẽ giải đáp thắc mắc ấy.
 
@@ -147,6 +158,7 @@ Chìa khoá quan trọng nhất để mở cánh cửa thành công chính là s
     publisher: "NXB Thế Giới",
     category: "Phát triển bản thân",
     publishedYear: 2023,
+    quantity: 5,
     cover: atomicHabitsImg,
     description: `Một thay đổi tí hon có thể biến đổi cuộc đời bạn không?
 
@@ -160,6 +172,7 @@ Và đó chính là sức mạnh của thói quen nguyên tử.`,
     author: "Simon Sinek",
     publisher: "NXB Công Thương",
     category: "Kinh doanh",
+    quantity: 0,
     publishedYear: 2024,
     cover: startWithWhyImg,
     description: `Lần đầu tiên khi tôi khám phá ra sức mạnh của lý do TẠI SAO là khi tôi cần đến nó trong cuộc đời mình. Nó không phải là kết quả của việc theo đuổi con đường học vấn của tôi. Nó đã xuất hiện khi tôi không còn cảm hứng với công việc của mình và cảm thấy vô cùng chán nản và thất vọng. Thực tế là đã không có vấn đề gì xảy ra với công việc của tôi, mà do tôi đã đánh mất niềm vui trong công việc mình làm. Nếu xét trên phương diện bề ngoài thì tôi nên vui mới phải. Tôi đã nhận được những khoản thù lao tốt và được làm việc với những đối tác tuyệt vời. Nhưng tôi đã trở nên vô cảm với những gì mình làm. Tôi không còn cảm thấy hài lòng với công việc của mình và cần tìm ra cách để nhóm lên ngọn lửa nhiệt huyết và đam mê thêm một lần nữa.

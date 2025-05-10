@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { books } from "../../data/Books/Books";
 import BookCard from "../../components/BookCard/BookCard";
+import Pagination from "../../components/Pagination/Pagination"; // <-- import component Pagination
 
 export default function AllBooks() {
   const navigate = useNavigate();
@@ -9,27 +9,36 @@ export default function AllBooks() {
   const queryParams = new URLSearchParams(location.search);
   const searchTerm = queryParams.get("search") || "";
 
-  const [filteredBooks, setFilteredBooks] = useState(books);
-  const [visibleBooks, setVisibleBooks] = useState(12); // số lượng sách đang hiển thị
+  const [books, setBooks] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalBooks, setTotalBooks] = useState(0);
+  const itemsPerPage = 12;
 
-  useEffect(() => {
-    if (searchTerm) {
-      const result = books.filter((book) =>
-        book.title.toLowerCase().includes(searchTerm.toLowerCase())
+  // Hàm lấy danh sách sách từ API
+  const fetchBooks = async (page) => {
+    try {
+      const response = await fetch(
+        `/api/books?page=${page}&limit=${itemsPerPage}&search=${searchTerm}` // Gửi searchTerm tới backend
       );
-      setFilteredBooks(result);
-    } else {
-      setFilteredBooks(books);
+      const data = await response.json();
+      setBooks(data.books); // Lưu dữ liệu sách vào state
+      setTotalBooks(data.total); // Lưu tổng số sách để phân trang
+    } catch (error) {
+      console.error("Error fetching books:", error);
     }
-    setVisibleBooks(12); // reset lại về 12 khi tìm kiếm
-  }, [searchTerm]);
+  };
+
+  // Lấy sách khi trang đổi hoặc searchTerm thay đổi
+  useEffect(() => {
+    fetchBooks(currentPage);
+  }, [currentPage, searchTerm]);
+
+  // Lấy sách theo page
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentBooks = books.slice(startIndex, startIndex + itemsPerPage); // Cắt dữ liệu sách theo trang
 
   const handleBookClick = (id) => {
     navigate(`/book-detail/${id}`);
-  };
-
-  const handleLoadMore = () => {
-    setVisibleBooks((prev) => prev + 12);
   };
 
   return (
@@ -38,10 +47,10 @@ export default function AllBooks() {
         {searchTerm ? `Kết quả cho "${searchTerm}"` : "Tất cả sách"}
       </h1>
 
-      {filteredBooks.length > 0 ? (
+      {currentBooks.length > 0 ? (
         <>
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredBooks.slice(0, visibleBooks).map((book) => (
+            {currentBooks.map((book) => (
               <div
                 key={book.id}
                 className="cursor-pointer transform hover:scale-105 hover:shadow-lg transition-all duration-300"
@@ -52,16 +61,13 @@ export default function AllBooks() {
             ))}
           </div>
 
-          {visibleBooks < filteredBooks.length && (
-            <div className="flex justify-center mt-8">
-              <button
-                onClick={handleLoadMore}
-                className="px-6 py-2 bg-primary text-white rounded hover:bg-primary-dark transition duration-300"
-              >
-                Xem thêm
-              </button>
-            </div>
-          )}
+          {/* Phân trang */}
+          <Pagination
+            totalItems={totalBooks}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage} // Cập nhật trang khi chuyển trang
+          />
         </>
       ) : (
         <div className="text-center text-gray-500 mt-8">

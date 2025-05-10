@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { books } from "../../data/Books/Books";
+import { books } from "../../data/Books/Books"; // You may still use this as a fallback if no API is available
 import BookCard from "../../components/BookCard/BookCard";
 
 export default function BookDetail() {
@@ -12,6 +12,7 @@ export default function BookDetail() {
   const [returnDate, setReturnDate] = useState("");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [randomBooks, setRandomBooks] = useState([]); // State to hold random books
 
   const bookingFormRef = useRef(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -19,9 +20,23 @@ export default function BookDetail() {
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
+    // Lây thông tin sách theo id
     const foundBook = books.find((b) => b.id === parseInt(id));
     setBook(foundBook);
-  }, [id]);
+
+    // Lấy 4 sách ngẫu nhiên (trừ sách đang xem)
+    const fetchRandomBooks = async () => {
+      try {
+        const response = await fetch(`/api/random-books?exclude=${id}`);
+        const data = await response.json();
+        setRandomBooks(data);
+      } catch (error) {
+        console.error("Error fetching random books:", error);
+      }
+    };
+
+    fetchRandomBooks();
+  }, [id]); // chạy lại khi `id` thay đổi
 
   const handleConfirmBooking = () => {
     if (!borrowDate || !returnDate) {
@@ -77,7 +92,9 @@ export default function BookDetail() {
       onMouseUp={stopDragging}
     >
       {/* Nội dung chính */}
-      <div className={showBookingForm ? "relative z-30 pointer-events-none" : ""}>
+      <div
+        className={showBookingForm ? "relative z-30 pointer-events-none" : ""}
+      >
         <div className="flex flex-col md:flex-row items-start gap-8 md:gap-10">
           <div className="w-full md:w-1/3 flex-shrink-0">
             <img
@@ -88,7 +105,9 @@ export default function BookDetail() {
           </div>
 
           <div className="flex-1 mt-6 md:mt-0">
-            <h1 className="text-2xl md:text-3xl font-bold mb-4">{book.title}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold mb-4">
+              {book.title}
+            </h1>
 
             <p className="text-gray-600 mb-2 text-sm md:text-base">
               <span className="font-semibold">Tác giả:</span> {book.author}
@@ -96,6 +115,15 @@ export default function BookDetail() {
             <p className="text-gray-600 mb-2 text-sm md:text-base">
               <span className="font-semibold">Thể loại:</span> {book.category}
             </p>
+            <p className="text-gray-600 mb-2 text-sm md:text-base">
+              <span className="font-semibold">Số lượng:</span>{" "}
+              {book.quantity > 0 ? (
+                book.quantity
+              ) : (
+                <span className="text-red-600">Hết sách</span>
+              )}
+            </p>
+
             <p className="text-gray-600 mb-2 text-sm md:text-base">
               <span className="font-semibold">Nhà xuất bản:</span>{" "}
               {book.publisher || "Không rõ"}
@@ -105,35 +133,43 @@ export default function BookDetail() {
 
             <h2 className="text-xl md:text-2xl font-semibold mb-3">Mô tả</h2>
             <p className="text-gray-700 leading-relaxed mb-8 text-sm md:text-base">
-              {book.description || "Hiện tại chưa có mô tả chi tiết cho sách này."}
+              {book.description ||
+                "Hiện tại chưa có mô tả chi tiết cho sách này."}
             </p>
 
             {/* Đặt ngay Button */}
             <button
-              className="bg-primary hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-md transition duration-300 w-full sm:w-auto text-sm md:text-base"
+              className={`${
+                book.quantity <= 0
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-primary hover:bg-red-700"
+              } text-white font-semibold py-3 px-6 rounded-md transition duration-300 w-full sm:w-auto text-sm md:text-base`}
               onClick={() => {
-                setShowBookingForm(true);
-                setPosition({
-                  x: window.innerWidth / 2 - 150,
-                  y: window.innerHeight / 2 - 200,
-                });
+                if (book.quantity > 0) {
+                  setShowBookingForm(true);
+                  setPosition({
+                    x: window.innerWidth / 2 - 150,
+                    y: window.innerHeight / 2 - 200,
+                  });
+                }
               }}
+              disabled={book.quantity <= 0}
             >
-              ĐẶT NGAY
+              {book.quantity <= 0 ? "HẾT SÁCH" : "ĐẶT NGAY"}
             </button>
           </div>
         </div>
-        
+
         <hr className="my-8 border-red-300" />
 
         {/* Gợi ý sách */}
         <div className="mt-16">
-          <h3 className="text-xl md:text-2xl font-semibold mb-6">Gợi ý thêm cho bạn</h3>
+          <h3 className="text-xl md:text-2xl font-semibold mb-6">
+            Gợi ý thêm cho bạn
+          </h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
-            {books
-              .filter((b) => b.id !== book.id)
-              .slice(0, 4)
-              .map((suggestedBook) => (
+            {randomBooks.length > 0 ? (
+              randomBooks.map((suggestedBook) => (
                 <div
                   key={suggestedBook.id}
                   onClick={() => navigate(`/book-detail/${suggestedBook.id}`)}
@@ -145,7 +181,12 @@ export default function BookDetail() {
                     onClick={() => navigate(`/book-detail/${suggestedBook.id}`)}
                   />
                 </div>
-              ))}
+              ))
+            ) : (
+              <div className="text-center text-sm md:text-base">
+                Đang tải gợi ý...
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -163,19 +204,27 @@ export default function BookDetail() {
               position: "absolute",
             }}
           >
-            <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Đặt sách</h2>
+            <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">
+              Đặt sách
+            </h2>
 
             {error && (
-              <div className="text-red-600 mb-4 text-center text-sm">{error}</div>
+              <div className="text-red-600 mb-4 text-center text-sm">
+                {error}
+              </div>
             )}
             {successMessage && (
-              <div className="text-green-600 mb-4 text-center text-sm">{successMessage}</div>
+              <div className="text-green-600 mb-4 text-center text-sm">
+                {successMessage}
+              </div>
             )}
 
             {!successMessage && (
               <>
                 <div className="mb-4">
-                  <label className="block font-semibold mb-2 text-sm">Ngày mượn:</label>
+                  <label className="block font-semibold mb-2 text-sm">
+                    Ngày mượn:
+                  </label>
                   <input
                     type="date"
                     value={borrowDate}
@@ -185,7 +234,9 @@ export default function BookDetail() {
                 </div>
 
                 <div className="mb-6">
-                  <label className="block font-semibold mb-2 text-sm">Ngày trả:</label>
+                  <label className="block font-semibold mb-2 text-sm">
+                    Ngày trả:
+                  </label>
                   <input
                     type="date"
                     value={returnDate}
