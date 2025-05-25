@@ -1,4 +1,3 @@
-// Book.js              # Model sách
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/database");
 
@@ -24,12 +23,15 @@ const Book = sequelize.define(
     },
     cover: {
       type: DataTypes.STRING,
-      allowNull: true, // URL hoặc tên file ảnh bìa
+      allowNull: true, // URL hoặc tên file ảnh
     },
     quantity: {
       type: DataTypes.INTEGER,
-      defaultValue: 0,
       allowNull: false,
+      defaultValue: 0,
+      validate: {
+        min: 0,
+      },
     },
     category: {
       type: DataTypes.STRING,
@@ -37,20 +39,19 @@ const Book = sequelize.define(
     },
     acc_state: {
       type: DataTypes.ENUM("available", "unavailable"),
+      allowNull: false,
       defaultValue: "available",
     },
   },
   {
-    timestamps: true, 
-    hooks: {
-      //...
-    },
+    tableName: "books", // tên bảng trong DB (nếu muốn)
+    timestamps: true, // tự động tạo createdAt & updatedAt
   }
 );
 
-// Phương thức để kiểm tra trạng thái sách (available/unavailable)
+// 📘 Method: Kiểm tra trạng thái sẵn sàng mượn
 Book.prototype.checkAvailability = function () {
-  return this.acc_state === "available";
+  return this.acc_state === "available" && this.quantity > 0;
 };
 
 module.exports = Book;

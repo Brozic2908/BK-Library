@@ -1,13 +1,15 @@
+const { Op } = require("sequelize");
 const Book = require("../models/bookModel");
 
-// API lấy danh sách tất cả sách (hoặc theo phân trang)
+// ---------------------- NGƯỜI DÙNG ----------------------
+
+// [GET] /api/books?page=1&limit=12 - Lấy danh sách sách có phân trang
 exports.getBooks = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 12;
     const startIndex = (page - 1) * limit;
 
-    // Lấy sách với phân trang
     const books = await Book.findAll({
       offset: startIndex,
       limit: limit,
@@ -15,46 +17,41 @@ exports.getBooks = async (req, res) => {
 
     const total = await Book.count();
 
-    res.json({
-      total,
-      books,
-    });
+    res.json({ total, books });
   } catch (error) {
     console.error("Error fetching books:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Lỗi khi lấy danh sách sách.", error: error.message });
   }
 };
 
-// API lấy 4 sách ngẫu nhiên (trừ sách đang xem)
+// [GET] /api/books/random?exclude=ID - Lấy 4 sách ngẫu nhiên, loại trừ ID
 exports.getRandomBooks = async (req, res) => {
   try {
-    const excludeId = parseInt(req.query.exclude); // Lấy ID cần loại trừ từ query param
+    const excludeId = parseInt(req.query.exclude);
 
-    // Lọc sách loại trừ cuốn đang xem
     const filteredBooks = await Book.findAll({
       where: {
         id: {
-          [Op.ne]: excludeId, // Loại trừ sách có id trùng với `excludeId`
+          [Op.ne]: excludeId,
         },
       },
     });
 
-    // Xáo trộn và chọn 4 cuốn ngẫu nhiên
     const shuffled = filteredBooks.sort(() => 0.5 - Math.random());
     const randomBooks = shuffled.slice(0, 4);
 
     res.status(200).json(randomBooks);
   } catch (error) {
     console.error("Error fetching random books:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Lỗi khi lấy sách ngẫu nhiên.", error: error.message });
   }
 };
 
-// API lấy chi tiết 1 sách
+// [GET] /api/books/:id - Lấy thông tin 1 sách
 exports.getBookById = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const book = await Book.findByPk(id); // Tìm sách theo ID
+    const book = await Book.findByPk(id);
 
     if (!book) {
       return res.status(404).json({ message: "Sách không tồn tại." });
@@ -63,17 +60,16 @@ exports.getBookById = async (req, res) => {
     res.json(book);
   } catch (error) {
     console.error("Error fetching book by ID:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Lỗi khi lấy thông tin sách.", error: error.message });
   }
 };
 
-// ✅ API đặt sách
+// [POST] /api/books/:id/borrow - Đặt mượn sách
 exports.bookBorrow = async (req, res) => {
   try {
     const { id } = req.params;
     const { borrowDate, returnDate } = req.body;
 
-    // Tìm sách theo ID
     const book = await Book.findByPk(id);
 
     if (!book) {
@@ -84,13 +80,60 @@ exports.bookBorrow = async (req, res) => {
       return res.status(400).json({ message: "Hết sách, không thể đặt mượn." });
     }
 
-    // Giảm số lượng sách khi mượn (giả lập trong cơ sở dữ liệu)
     book.quantity -= 1;
     await book.save();
 
     res.json({ message: "Đặt sách thành công.", book });
   } catch (error) {
     console.error("Error borrowing book:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Lỗi khi đặt mượn sách.", error: error.message });
+  }
+};
+
+// ---------------------- QUẢN TRỊ VIÊN ----------------------
+
+// [POST] /api/books - Tạo sách mới
+exports.createBook = async (req, res) => {
+  try {
+    const newBook = await Book.create(req.body);
+    res.status(201).json(newBook);
+  } catch (error) {
+    console.error("Error creating book:", error);
+    res.status(400).json({ message: "Lỗi khi tạo sách mới.", error: error.message });
+  }
+};
+
+// [PUT] /api/books/:id - Cập nhật sách
+exports.updateBook = async (req, res) => {
+  try {
+    const [updated] = await Book.update(req.body, {
+      where: { id: req.params.id },
+    });
+
+    if (!updated) {
+      return res.status(404).json({ message: "Không tìm thấy sách." });
+    }
+
+    const updatedBook = await Book.findByPk(req.params.id);
+    res.json(updatedBook);
+  } catch (error) {
+    console.error("Error updating book:", error);
+    res.status(400).json({ message: "Lỗi khi cập nhật sách.", error: error.message });
+  }
+};
+
+// [DELETE] /api/books/:id - Xóa sách
+exports.deleteBook = async (req, res) => {
+  try {
+    const deleted = await Book.destroy({ where: { id: req.params.id } });
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Không tìm thấy sách." });
+    }
+
+    res.json({ message: "Đã xóa sách thành công." });
+  } catch (error) {
+    console.error("Error deleting book:", error);
+    res.status(500).json({ message: "Lỗi khi xóa sách.", error: error.message });
   }
 };
