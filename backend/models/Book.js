@@ -44,7 +44,7 @@ const Book = sequelize.define(
     },
   },
   {
-    tableName: "books", // tên bảng trong DB (nếu muốn)
+    tableName: "books", 
     timestamps: true, // tự động tạo createdAt & updatedAt
   }
 );

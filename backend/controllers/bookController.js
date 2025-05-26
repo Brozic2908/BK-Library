@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const Book = require("../models/bookModel");
+const Book = require("../models/Book");
 
 // ---------------------- NGƯỜI DÙNG ----------------------
 
