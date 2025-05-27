@@ -4,54 +4,56 @@ const { sequelize } = require("../config/database");
 const Book = sequelize.define(
   "Book",
   {
-    id: {
+    book_id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
     title: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: false,
     },
     author: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(255),
       allowNull: true,
     },
-    cover: {
-      type: DataTypes.STRING,
-      allowNull: true, // URL hoặc tên file ảnh
+    genre: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
     },
-    quantity: {
+    publish_year: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    stock: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
-      validate: {
-        min: 0,
-      },
     },
-    category: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    acc_state: {
-      type: DataTypes.ENUM("available", "unavailable"),
+    available_number: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: "available",
+      defaultValue: 0,
+    },
+    borrowed_number: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    image_url: {
+      type: DataTypes.STRING(500),
+      allowNull: true,
     },
   },
   {
-    tableName: "books", 
-    timestamps: true, // tự động tạo createdAt & updatedAt
+    tableName: "Book",       // Phải viết đúng tên bảng trong SQL
+    timestamps: false,       // Vì db.sql không tạo createdAt/updatedAt
   }
 );
 
-// 📘 Method: Kiểm tra trạng thái sẵn sàng mượn
+// ✅ Custom method (tuỳ chọn): Kiểm tra sách có sẵn không
 Book.prototype.checkAvailability = function () {
-  return this.acc_state === "available" && this.quantity > 0;
+  return this.available_number > 0;
 };
 
 module.exports = Book;
