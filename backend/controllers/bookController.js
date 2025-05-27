@@ -9,13 +9,23 @@ exports.getBooks = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 12;
     const startIndex = (page - 1) * limit;
+    const searchTerm = req.query.search || "";
+
+    const whereCondition = searchTerm
+      ? {
+          title: {
+            [Op.like]: `%${searchTerm}%`, // Tìm tiêu đề chứa chuỗi tìm kiếm
+          },
+        }
+      : {};
 
     const books = await Book.findAll({
+      where: whereCondition,
       offset: startIndex,
       limit: limit,
     });
 
-    const total = await Book.count();
+    const total = await Book.count({ where: whereCondition });
 
     res.json({ total, books });
   } catch (error) {
@@ -23,6 +33,7 @@ exports.getBooks = async (req, res) => {
     res.status(500).json({ message: "Lỗi khi lấy danh sách sách.", error: error.message });
   }
 };
+
 
 // [GET] /api/books/random?exclude=ID - Lấy 4 sách ngẫu nhiên, loại trừ ID
 exports.getRandomBooks = async (req, res) => {

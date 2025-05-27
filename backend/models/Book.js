@@ -46,12 +46,12 @@ const Book = sequelize.define(
     },
   },
   {
-    tableName: "Book",       // Phải viết đúng tên bảng trong SQL
-    timestamps: false,       // Vì db.sql không tạo createdAt/updatedAt
+    tableName: "Book",       
+    timestamps: false,       
   }
 );
 
-// ✅ Custom method (tuỳ chọn): Kiểm tra sách có sẵn không
+
 Book.prototype.checkAvailability = function () {
   return this.available_number > 0;
 };

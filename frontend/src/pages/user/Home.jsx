@@ -4,41 +4,37 @@ import BookCard from "../../components/BookCard/BookCard";
 
 // image
 import homeImg from "../../assets/img/home/home_img.avif";
-import react_native_img from "../../assets/img/books/react_native_img.png";
-import lam_chu_kien_thuc_tieng_anh_img from "../../assets/img/books/lam_chu_kien_thuc_tieng_anh_img.png";
-import blockchain_img from "../../assets/img/books/blockchain_img.png";
-import khoa_hoc_tin_phong from "../../assets/img/books/khoa_hoc_tin_phong.png";
 
 const Home = () => {
   const [randomBooks, setRandomBooks] = useState([]);
   const navigate = useNavigate();
-  const id = 1; // Giả sử id là 1
+
+  const excludeId = null;
 
   useEffect(() => {
-    // Lây thông tin sách theo id
-    const foundBook = books.find((b) => b.id === parseInt(id)); 
-    setBook(foundBook);
-
-    // Lấy 4 sách ngẫu nhiên (trừ sách đang xem)
     const fetchRandomBooks = async () => {
       try {
-        const response = await fetch(`/api/random-books?exclude=${id}`);
+        const url = excludeId
+          ? `/api/books/random?exclude=${excludeId}`
+          : `/api/books/random`;
+
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
-        setRandomBooks(data); 
+
+        setRandomBooks(data);
       } catch (error) {
         console.error("Error fetching random books:", error);
       }
     };
 
     fetchRandomBooks();
-  }, [id]); // chạy lại khi `id` thay đổi
+  }, [excludeId]);
 
   const goToBookDetail = (bookId) => {
     navigate(`/book-detail/${bookId}`);
-  };
-
-  const goToAllBooks = () => {
-    navigate("/all-books");
   };
 
   return (
@@ -75,16 +71,24 @@ const Home = () => {
 
         {/* Book Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 items-start">
-          {randomBooks.length > 0 &&
+          {randomBooks.length > 0 ? (
             randomBooks.map((book) => (
-              <BookCard
+              <div
                 key={book.id}
                 className="cursor-pointer"
-                title={book.title}
-                image={book.image}
                 onClick={() => goToBookDetail(book.id)}
-              />
-            ))}
+              >
+                <BookCard
+                  title={book.title}
+                  image={book.cover || book.image || ""}
+                />
+              </div>
+            ))
+          ) : (
+            <p className="text-center col-span-full text-gray-500">
+              Không có sách để hiển thị.
+            </p>
+          )}
         </div>
 
         {/* See More Button */}

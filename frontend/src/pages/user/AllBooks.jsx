@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import BookCard from "../../components/BookCard/BookCard";
-import Pagination from "../../components/Pagination/Pagination"; // <-- import component Pagination
+import Pagination from "../../components/Pagination/Pagination";
 
 export default function AllBooks() {
   const navigate = useNavigate();
@@ -9,37 +9,43 @@ export default function AllBooks() {
   const queryParams = new URLSearchParams(location.search);
   const searchTerm = queryParams.get("search") || "";
 
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState([]); // default to empty array
   const [currentPage, setCurrentPage] = useState(1);
   const [totalBooks, setTotalBooks] = useState(0);
   const itemsPerPage = 12;
 
-  // Hàm lấy danh sách sách từ API
+  // Fetch books from API with pagination and search
   const fetchBooks = async (page) => {
     try {
       const response = await fetch(
-        `/api/books?page=${page}&limit=${itemsPerPage}&search=${searchTerm}` // Gửi searchTerm tới backend
+        `/api/books?page=${page}&limit=${itemsPerPage}&search=${encodeURIComponent(searchTerm)}`
       );
       const data = await response.json();
-      setBooks(data.books); // Lưu dữ liệu sách vào state
-      setTotalBooks(data.total); // Lưu tổng số sách để phân trang
+
+      setBooks(data.books || []); // fallback to empty array
+      setTotalBooks(data.total || 0); // fallback to 0
     } catch (error) {
       console.error("Error fetching books:", error);
+      setBooks([]); // clear on error
+      setTotalBooks(0);
     }
   };
 
-  // Lấy sách khi trang đổi hoặc searchTerm thay đổi
+  // Reset page to 1 if search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+  // Fetch books when currentPage or searchTerm changes
   useEffect(() => {
     fetchBooks(currentPage);
   }, [currentPage, searchTerm]);
 
-  // Lấy sách theo page
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentBooks = books.slice(startIndex, startIndex + itemsPerPage); // Cắt dữ liệu sách theo trang
-
   const handleBookClick = (id) => {
     navigate(`/book-detail/${id}`);
   };
+
+  const currentBooks = books;
 
   return (
     <div className="max-w-6xl mx-auto p-4">
@@ -47,7 +53,7 @@ export default function AllBooks() {
         {searchTerm ? `Kết quả cho "${searchTerm}"` : "Tất cả sách"}
       </h1>
 
-      {currentBooks.length > 0 ? (
+      {currentBooks && currentBooks.length > 0 ? (
         <>
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {currentBooks.map((book) => (
@@ -61,12 +67,11 @@ export default function AllBooks() {
             ))}
           </div>
 
-          {/* Phân trang */}
           <Pagination
             totalItems={totalBooks}
             itemsPerPage={itemsPerPage}
             currentPage={currentPage}
-            onPageChange={setCurrentPage} // Cập nhật trang khi chuyển trang
+            onPageChange={setCurrentPage}
           />
         </>
       ) : (

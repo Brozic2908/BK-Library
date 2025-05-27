@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { books } from "../../data/Books/Books"; // You may still use this as a fallback if no API is available
 import BookCard from "../../components/BookCard/BookCard";
 
 export default function BookDetail() {
@@ -12,7 +11,7 @@ export default function BookDetail() {
   const [returnDate, setReturnDate] = useState("");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [randomBooks, setRandomBooks] = useState([]); // State to hold random books
+  const [randomBooks, setRandomBooks] = useState([]);
 
   const bookingFormRef = useRef(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -20,25 +19,44 @@ export default function BookDetail() {
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    // Lây thông tin sách theo id
-    const foundBook = books.find((b) => b.id === parseInt(id));
-    setBook(foundBook);
-
-    // Lấy 4 sách ngẫu nhiên (trừ sách đang xem)
-    const fetchRandomBooks = async () => {
+    // Fetch book detail by id
+    const fetchBook = async () => {
       try {
-        const response = await fetch(`/api/random-books?exclude=${id}`);
-        const data = await response.json();
-        setRandomBooks(data);
-      } catch (error) {
-        console.error("Error fetching random books:", error);
+        const res = await fetch(`/api/books/${id}`);
+        if (!res.ok) {
+          throw new Error("Sách không tồn tại.");
+        }
+        const data = await res.json();
+        setBook(data);
+      } catch (err) {
+        setBook(null);
+        setError(err.message);
       }
     };
 
-    fetchRandomBooks();
-  }, [id]); // chạy lại khi `id` thay đổi
+    // Fetch random books excluding current
+    const fetchRandomBooks = async () => {
+      try {
+        const res = await fetch(`/api/books/random?exclude=${id}`);
+        if (!res.ok) throw new Error("Lỗi khi lấy sách ngẫu nhiên.");
+        const data = await res.json();
+        setRandomBooks(data);
+      } catch (err) {
+        console.error("Error fetching random books:", err);
+      }
+    };
 
-  const handleConfirmBooking = () => {
+    fetchBook();
+    fetchRandomBooks();
+    // Reset messages & form when id changes
+    setShowBookingForm(false);
+    setBorrowDate("");
+    setReturnDate("");
+    setError("");
+    setSuccessMessage("");
+  }, [id]);
+
+  const handleConfirmBooking = async () => {
     if (!borrowDate || !returnDate) {
       setError("⚠️ Vui lòng chọn đầy đủ ngày mượn và ngày trả sách.");
       return;
@@ -48,14 +66,32 @@ export default function BookDetail() {
       return;
     }
     setError("");
-    setSuccessMessage("✅ Đặt sách thành công!");
 
-    setTimeout(() => {
-      setShowBookingForm(false);
-      setBorrowDate("");
-      setReturnDate("");
-      setSuccessMessage("");
-    }, 2000);
+    try {
+      const res = await fetch(`/api/books/${id}/borrow`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ borrowDate, returnDate }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Lỗi khi đặt mượn sách.");
+      }
+
+      setSuccessMessage("✅ Đặt sách thành công!");
+      // Update book quantity locally after successful borrow
+      setBook((prev) => ({ ...prev, quantity: prev.quantity - 1 }));
+
+      setTimeout(() => {
+        setShowBookingForm(false);
+        setBorrowDate("");
+        setReturnDate("");
+        setSuccessMessage("");
+      }, 2000);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const startDragging = (e) => {
@@ -68,9 +104,7 @@ export default function BookDetail() {
     }
   };
 
-  const stopDragging = () => {
-    setIsDragging(false);
-  };
+  const stopDragging = () => setIsDragging(false);
 
   const handleDragging = (e) => {
     if (isDragging) {
@@ -81,8 +115,14 @@ export default function BookDetail() {
     }
   };
 
+  if (error && !book) {
+    return (
+      <div className="text-center py-20 text-xl text-red-600">{error}</div>
+    );
+  }
+
   if (!book) {
-    return <div className="text-center py-20 text-xl">Sách không tồn tại.</div>;
+    return <div className="text-center py-20 text-xl">Đang tải sách...</div>;
   }
 
   return (
@@ -90,11 +130,10 @@ export default function BookDetail() {
       className="relative max-w-6xl mx-auto px-4 py-10"
       onMouseMove={handleDragging}
       onMouseUp={stopDragging}
+      onMouseLeave={stopDragging}
     >
-      {/* Nội dung chính */}
-      <div
-        className={showBookingForm ? "relative z-30 pointer-events-none" : ""}
-      >
+      {/* Main content */}
+      <div className={showBookingForm ? "relative z-30 pointer-events-none" : ""}>
         <div className="flex flex-col md:flex-row items-start gap-8 md:gap-10">
           <div className="w-full md:w-1/3 flex-shrink-0">
             <img
@@ -105,9 +144,7 @@ export default function BookDetail() {
           </div>
 
           <div className="flex-1 mt-6 md:mt-0">
-            <h1 className="text-2xl md:text-3xl font-bold mb-4">
-              {book.title}
-            </h1>
+            <h1 className="text-2xl md:text-3xl font-bold mb-4">{book.title}</h1>
 
             <p className="text-gray-600 mb-2 text-sm md:text-base">
               <span className="font-semibold">Tác giả:</span> {book.author}
@@ -133,11 +170,10 @@ export default function BookDetail() {
 
             <h2 className="text-xl md:text-2xl font-semibold mb-3">Mô tả</h2>
             <p className="text-gray-700 leading-relaxed mb-8 text-sm md:text-base">
-              {book.description ||
-                "Hiện tại chưa có mô tả chi tiết cho sách này."}
+              {book.description || "Hiện tại chưa có mô tả chi tiết cho sách này."}
             </p>
 
-            {/* Đặt ngay Button */}
+            {/* Booking Button */}
             <button
               className={`${
                 book.quantity <= 0
@@ -162,11 +198,9 @@ export default function BookDetail() {
 
         <hr className="my-8 border-red-300" />
 
-        {/* Gợi ý sách */}
+        {/* Suggested Books */}
         <div className="mt-16">
-          <h3 className="text-xl md:text-2xl font-semibold mb-6">
-            Gợi ý thêm cho bạn
-          </h3>
+          <h3 className="text-xl md:text-2xl font-semibold mb-6">Gợi ý thêm cho bạn</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
             {randomBooks.length > 0 ? (
               randomBooks.map((suggestedBook) => (
@@ -183,15 +217,13 @@ export default function BookDetail() {
                 </div>
               ))
             ) : (
-              <div className="text-center text-sm md:text-base">
-                Đang tải gợi ý...
-              </div>
+              <div className="text-center text-sm md:text-base">Đang tải gợi ý...</div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Booking Form với Drag */}
+      {/* Booking Form with drag */}
       {showBookingForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 md:py-0">
           <div
@@ -204,27 +236,19 @@ export default function BookDetail() {
               position: "absolute",
             }}
           >
-            <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">
-              Đặt sách
-            </h2>
+            <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Đặt sách</h2>
 
             {error && (
-              <div className="text-red-600 mb-4 text-center text-sm">
-                {error}
-              </div>
+              <div className="text-red-600 mb-4 text-center text-sm">{error}</div>
             )}
             {successMessage && (
-              <div className="text-green-600 mb-4 text-center text-sm">
-                {successMessage}
-              </div>
+              <div className="text-green-600 mb-4 text-center text-sm">{successMessage}</div>
             )}
 
             {!successMessage && (
               <>
                 <div className="mb-4">
-                  <label className="block font-semibold mb-2 text-sm">
-                    Ngày mượn:
-                  </label>
+                  <label className="block font-semibold mb-2 text-sm">Ngày mượn:</label>
                   <input
                     type="date"
                     value={borrowDate}
@@ -234,9 +258,7 @@ export default function BookDetail() {
                 </div>
 
                 <div className="mb-6">
-                  <label className="block font-semibold mb-2 text-sm">
-                    Ngày trả:
-                  </label>
+                  <label className="block font-semibold mb-2 text-sm">Ngày trả:</label>
                   <input
                     type="date"
                     value={returnDate}
@@ -245,16 +267,16 @@ export default function BookDetail() {
                   />
                 </div>
 
-                <div className="flex justify-between">
+                <div className="flex justify-between gap-4">
                   <button
-                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-md text-sm"
                     onClick={() => setShowBookingForm(false)}
+                    className="flex-1 py-2 rounded-md border border-gray-400 hover:bg-gray-100 transition text-sm"
                   >
                     Hủy
                   </button>
                   <button
-                    className="bg-primary hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md text-sm"
                     onClick={handleConfirmBooking}
+                    className="flex-1 bg-primary text-white font-semibold py-2 rounded-md hover:bg-red-700 transition text-sm"
                   >
                     Xác nhận
                   </button>
@@ -262,6 +284,10 @@ export default function BookDetail() {
               </>
             )}
           </div>
+          <div
+            className="fixed inset-0 bg-black opacity-30"
+            onClick={() => setShowBookingForm(false)}
+          ></div>
         </div>
       )}
     </div>
