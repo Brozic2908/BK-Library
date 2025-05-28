@@ -1,3 +1,4 @@
+//backend/models/Book.js
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/database");
 
@@ -22,7 +23,7 @@ const Book = sequelize.define(
       allowNull: true,
     },
     publish_year: {
-      type: DataTypes.DATE,
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     stock: {
@@ -46,11 +47,12 @@ const Book = sequelize.define(
     },
   },
   {
-    tableName: "Book",       
-    timestamps: false,       
+    tableName: "Book",
+    timestamps: false,
+    charset: "utf8mb4",
+    collate: "utf8mb4_unicode_ci",
   }
 );
-
 
 Book.prototype.checkAvailability = function () {
   return this.available_number > 0;

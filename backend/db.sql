@@ -21,7 +21,7 @@ CREATE TABLE `Book` (
   `title`            VARCHAR(255) NOT NULL,
   `author`           VARCHAR(255) DEFAULT NULL,
   `genre`            VARCHAR(100) DEFAULT NULL,
-  `publish_year`     DATE        DEFAULT NULL,
+  `publish_year`     INT        DEFAULT NULL,
   `stock`            INT         NOT NULL DEFAULT 0,
   `available_number` INT         NOT NULL DEFAULT 0,
   `borrowed_number`  INT         NOT NULL DEFAULT 0,

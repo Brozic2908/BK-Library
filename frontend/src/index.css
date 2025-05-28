@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @theme {
-  --font-display: "Satoshi", "sans-serif";
+  --font-display: "Be Vietnam Pro", sans-serif;
   --color-primary: #82181a;
 }
 

@@ -74,13 +74,13 @@ const Home = () => {
           {randomBooks.length > 0 ? (
             randomBooks.map((book) => (
               <div
-                key={book.id}
+                key={book.book_id}
                 className="cursor-pointer"
-                onClick={() => goToBookDetail(book.id)}
+                onClick={() => goToBookDetail(book.book_id)}
               >
                 <BookCard
                   title={book.title}
-                  image={book.cover || book.image || ""}
+                  image={book.image_url || ""}
                 />
               </div>
             ))

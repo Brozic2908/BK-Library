@@ -1,4 +1,3 @@
-// database.js          # Kết nối đến cơ sở dữ liệu
 const { Sequelize } = require("sequelize");
 require("dotenv").config();
 
@@ -11,6 +10,14 @@ const sequelize = new Sequelize(
     dialect: "mysql",
     port: process.env.DB_PORT,
     logging: false,
+
+    dialectOptions: {
+      charset: "utf8mb4",
+    },
+    define: {
+      charset: "utf8mb4",
+      collate: "utf8mb4_unicode_ci",
+    },
   }
 );
 
