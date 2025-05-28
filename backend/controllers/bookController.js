@@ -92,34 +92,6 @@ exports.getBookById = async (req, res) => {
   }
 };
 
-// [POST] /api/books/:id/borrow - Đặt mượn sách
-exports.bookBorrow = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { borrowDate, returnDate } = req.body;
-
-    const book = await Book.findByPk(id);
-
-    if (!book) {
-      return res.status(404).json({ message: "Sách không tồn tại." });
-    }
-
-    if (book.available_number <= 0) {
-      return res.status(400).json({ message: "Hết sách, không thể đặt mượn." });
-    }
-
-    book.available_number -= 1;
-    book.borrowed_number += 1;
-    await book.save();
-
-    res.json({ message: "Đặt sách thành công.", book });
-  } catch (error) {
-    console.error("Error borrowing book:", error);
-    res
-      .status(500)
-      .json({ message: "Lỗi khi đặt mượn sách.", error: error.message });
-  }
-};
 
 // ---------------------- QUẢN TRỊ VIÊN ----------------------
 
