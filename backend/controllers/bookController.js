@@ -24,7 +24,7 @@ exports.getBooks = async (req, res) => {
       where: whereCondition,
       offset: startIndex,
       limit: limit,
-      attributes: ["id", "title", "image_url"],
+      attributes: ["book_id", "title", "image_url"],
     });
 
     const total = await Book.count({ where: whereCondition });
