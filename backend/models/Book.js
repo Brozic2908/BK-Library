@@ -1,4 +1,4 @@
-//backend/models/Book.js
+// backend/models/Book.js
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/database");
 
@@ -43,6 +43,10 @@ const Book = sequelize.define(
     },
     image_url: {
       type: DataTypes.STRING(500),
+      allowNull: true,
+    },
+    description: {
+      type: DataTypes.TEXT,
       allowNull: true,
     },
   },

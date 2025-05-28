@@ -17,9 +17,6 @@ router.get("/random", bookController.getRandomBooks);
 // Lấy chi tiết 1 sách theo ID
 router.get("/:id", bookController.getBookById);
 
-// Đặt mượn sách
-router.post("/:id/borrow", bookController.bookBorrow);
-
 // Tạo sách mới (admin)
 router.post("/", bookController.createBook);
 

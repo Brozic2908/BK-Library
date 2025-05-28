@@ -17,17 +17,19 @@ CREATE TABLE `User` (
 
 
 CREATE TABLE `Book` (
-  `book_id`          INT         NOT NULL AUTO_INCREMENT,
-  `title`            VARCHAR(255) NOT NULL,
-  `author`           VARCHAR(255) DEFAULT NULL,
-  `genre`            VARCHAR(100) DEFAULT NULL,
-  `publish_year`     INT        DEFAULT NULL,
-  `stock`            INT         NOT NULL DEFAULT 0,
-  `available_number` INT         NOT NULL DEFAULT 0,
-  `borrowed_number`  INT         NOT NULL DEFAULT 0,
-  `image_url`        VARCHAR(500) DEFAULT NULL,
+  `book_id`          INT           NOT NULL AUTO_INCREMENT,
+  `title`            VARCHAR(255)  NOT NULL,
+  `author`           VARCHAR(255)  DEFAULT NULL,
+  `genre`            VARCHAR(100)  DEFAULT NULL,
+  `publish_year`     INT           DEFAULT NULL,
+  `stock`            INT           NOT NULL DEFAULT 0,
+  `available_number` INT           NOT NULL DEFAULT 0,
+  `borrowed_number`  INT           NOT NULL DEFAULT 0,
+  `image_url`        VARCHAR(500)  DEFAULT NULL,
+  `description`      TEXT          DEFAULT NULL,
   PRIMARY KEY (`book_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE `Transaction` (
   `tx_id`             INT        NOT NULL AUTO_INCREMENT,
