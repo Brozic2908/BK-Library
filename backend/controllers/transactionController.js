@@ -56,7 +56,7 @@ exports.getAllTransactionsByUser = async (req, res, next) => {
         {
           model: Book,
           as: 'book',
-          attributes: ['title', 'author', 'genre'],
+          attributes: ['title', 'author', 'image_url'],
         }
       ],
       order: [['tx_id', 'DESC']]  // Sắp xếp theo mới nhất
@@ -93,7 +93,7 @@ exports.getAllTransactions = async (req, res, next) => {
         {
           model: Book,
           as: 'book',
-          attributes: ['title', 'author', 'genre', 'publish_year', 'image_url'],
+          attributes: ['title'],
         },
       ],
     });
@@ -183,6 +183,38 @@ exports.updateTransactionStatus = async (req, res, next) => {
       data: { transaction },
     });
 
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.updateTransactionDates = async (req, res, next) => {
+  try {
+    const { tx_id } = req.params;
+    const { schedule_date, borrow_date, due_date, return_date } = req.body;
+
+    // Tìm giao dịch
+    const transaction = await Transaction.findByPk(tx_id);
+    if (!transaction) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Không tìm thấy giao dịch với ID này",
+      });
+    }
+
+    // Cập nhật các trường ngày nếu có truyền vào
+    if (schedule_date !== undefined) transaction.schedule_date = schedule_date;
+    if (borrow_date !== undefined) transaction.borrow_date = borrow_date;
+    if (due_date !== undefined) transaction.due_date = due_date;
+    if (return_date !== undefined) transaction.return_date = return_date;
+
+    await transaction.save();
+
+    res.status(200).json({
+      status: "success",
+      message: "Cập nhật ngày giao dịch thành công",
+      data: { transaction },
+    });
   } catch (error) {
     next(error);
   }
