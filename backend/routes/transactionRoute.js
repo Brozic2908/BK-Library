@@ -4,11 +4,6 @@ const transactionController = require("../controllers/transactionController");
 const { protect, restrictTo } = require("../middlewares/auth");
 const router = express.Router();
 
-// Định nghĩa các route mượn trả ở đây
-// router.get("/", (req, res) => {
-//   res.status(200).json({ message: "Loan route" });
-// });
-
 router.post("/", transactionController.createTransaction);
 router.get("/:member_id", transactionController.getAllTransactionsByUser);
 router.get("/", transactionController.getAllTransactions);
@@ -22,6 +17,11 @@ router.get("/", transactionController.getAllTransactions);
 router.patch(
   "/:tx_id/update", 
   transactionController.updateTransactionStatus
+);
+
+router.patch(
+  "/:tx_id/updatedate", 
+  transactionController.updateTransactionDates
 );
 
 module.exports = router;
