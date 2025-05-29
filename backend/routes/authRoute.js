@@ -4,6 +4,24 @@ const authController = require("../controllers/authController");
 const { protect } = require("../middlewares/auth");
 const router = express.Router();
 
+// Đăng nhập
+router.post("/login", authController.login);
+
+// Đăng ký người dùng mới
+router.post("/register", authController.register);
+
+// Update mất khẩu mới
+router.patch("/updatePassword", protect, authController.updatePassword);
+
+module.exports = router;
+
+/**
+ * @openapi
+ * tags:
+ *   name: auth
+ *   description: Phân quyền người dùng
+ */
+
 /**
  *  @openapi
  *  /auth/login:
@@ -54,8 +72,6 @@ const router = express.Router();
  *                        type: string
  *                        example: Email hoặc mật khẩu không đúng
  */
-// Đăng nhập
-router.post("/login", authController.login);
 
 /**
  *  @openapi
@@ -101,8 +117,6 @@ router.post("/login", authController.login);
  *                  $ref: "#/components/schemas/Error"
  *
  */
-// Đăng ký người dùng mới
-router.post("/register", authController.register);
 
 /**
  *  @openapi
@@ -171,7 +185,3 @@ router.post("/register", authController.register);
  *          - BearerAuth: []
  *
  */
-// Update mất khẩu mới
-router.patch("/updatePassword", protect, authController.updatePassword);
-
-module.exports = router;

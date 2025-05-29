@@ -154,7 +154,7 @@ exports.updatePassword = async (req, res, next) => {
  *       properties:
  *         email:
  *           type: string
- *           example: email@example.com
+ *           example: example@gmail.com
  *         password:
  *           type: string
  *           example: "12345678"
@@ -166,7 +166,7 @@ exports.updatePassword = async (req, res, next) => {
  *           example: Nguyen Van A
  *         email:
  *           type: string
- *           example: email@example.com
+ *           example: example@gmail.com
  *         password:
  *           type: string
  *           example: "12345678"

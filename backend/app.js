@@ -18,6 +18,11 @@ const options = {
       version: "1.0.0",
       description: "API Docs của hệ thống quản lý mượn sách thư viện",
     },
+    servers: [
+      {
+        url: `http://localhost:${process.env.PORT || 3000}/api`,
+      },
+    ],
     components: {
       securitySchemes: {
         BearerAuth: {
