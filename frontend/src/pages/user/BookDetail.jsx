@@ -44,7 +44,7 @@ export default function BookDetail() {
         setError(err.message);
       }
     };
-    
+
     // Fetch random books excluding current
     const fetchRandomBooks = async () => {
       try {
@@ -80,20 +80,46 @@ export default function BookDetail() {
     setError("");
 
     try {
-      const res = await fetch(`/api/books/${id}/borrow`, {
+      // 1. Tạo giao dịch mới
+      const createRes = await fetch("/api/transactions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ borrowDate, returnDate }),
+        body: JSON.stringify({
+          member_id: user.id, // đảm bảo bạn có biến user chứa id người dùng
+          book_id: id,
+          schedule_date: borrowDate,
+        }),
       });
-      const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.message || "Lỗi khi đặt mượn sách.");
+      const createData = await createRes.json();
+      if (!createRes.ok) {
+        throw new Error(
+          createData.message || "Lỗi khi tạo giao dịch mượn sách."
+        );
       }
 
+      const txId = createData.data.transaction.tx_id;
+
+      // 2. Cập nhật trạng thái sang 'Borrowing'
+      const updateRes = await fetch(`/api/transactions/${txId}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "Borrowing" }),
+      });
+
+      const updateData = await updateRes.json();
+      if (!updateRes.ok) {
+        throw new Error(
+          updateData.message || "Lỗi khi cập nhật trạng thái mượn."
+        );
+      }
+
+      // ✅ Thành công
       setSuccessMessage("✅ Đặt sách thành công!");
-      // Giảm số lượng sách (đảm bảo trường đúng)
-      setBook((prev) => ({ ...prev, available_number: prev.available_number - 1 }));
+      setBook((prev) => ({
+        ...prev,
+        available_number: prev.available_number - 1,
+      }));
 
       setTimeout(() => {
         setShowBookingForm(false);
