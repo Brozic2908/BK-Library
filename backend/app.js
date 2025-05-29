@@ -5,7 +5,33 @@ const helmet = require("helmet");
 const cors = require("cors");
 const routes = require("./routes");
 const errorHandler = require("./middlewares/errorHandler");
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
 require("dotenv").config();
+
+// Tạo swagger
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "BK Library API",
+      version: "1.0.0",
+      description: "API Docs của hệ thống quản lý mượn sách thư viện",
+    },
+    components: {
+      securitySchemes: {
+        BearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+  },
+  apis: ["./routes/*.js", "./controllers/*.js"],
+};
+
+const openapiSpecification = swaggerJsdoc(options);
 
 // Khởi tạo ứng dụng Express
 const app = express();
@@ -24,6 +50,9 @@ app.use(express.urlencoded({ extended: true }));
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+
+// Document about api
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
 // Định nghĩa routes
 app.use("/api", routes);

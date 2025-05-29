@@ -33,7 +33,7 @@ exports.register = async (req, res, next) => {
     });
 
     // Tạo JWT token
-    const token = signToken(newUser.id);
+    const token = signToken(newUser.user_id);
 
     // Loại bỏ mật khẩu từ response
     newUser.password = undefined;
@@ -75,7 +75,7 @@ exports.login = async (req, res, next) => {
     }
 
     // Tạo JWT token
-    const token = signToken(user.id);
+    const token = signToken(user.user_id);
 
     // Loại bỏ mật khẩu từ response
     user.password = undefined;
@@ -95,7 +95,7 @@ exports.login = async (req, res, next) => {
 // Đổi mật khẩu dựa bằng xác thực mật khẩu cũ ở user
 exports.updatePassword = async (req, res, next) => {
   try {
-    const user = await User.findByPk(req.user.id);
+    const user = await User.findByPk(req.user.user_id);
 
     if (!user) {
       return res.status(404).json({
@@ -119,14 +119,14 @@ exports.updatePassword = async (req, res, next) => {
     await user.save(); // Luư thay đổi vào database
 
     // Tạo JWT token mới sau khi đổi mật khẩu
-    const token = signToken(user.id);
+    const token = signToken(user.user_id);
 
     // Loại bỏ token
     user.password = undefined;
 
     res.status(200).json({
       status: "success",
-      message: "Đổi mật khẩu thành công",
+      token: token,
       data: {
         user,
       },
@@ -135,3 +135,85 @@ exports.updatePassword = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     Error:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: string
+ *           example: error
+ *         message:
+ *           type: string
+ *           example: Đã có lỗi xảy ra
+ *     login:
+ *       type: object
+ *       properties:
+ *         email:
+ *           type: string
+ *           example: email@example.com
+ *         password:
+ *           type: string
+ *           example: "12345678"
+ *     register:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           example: Nguyen Van A
+ *         email:
+ *           type: string
+ *           example: email@example.com
+ *         password:
+ *           type: string
+ *           example: "12345678"
+ *     successAuth:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: string
+ *           example: "success"
+ *         token:
+ *           type: string
+ *           example: $2b$10$8deahvzYJj3tpHu...
+ *         data:
+ *           type: object
+ *           properties:
+ *             user:
+ *               type: object
+ *               properties:
+ *                 user_id:
+ *                   type: integer
+ *                   example: 1
+ *                 name:
+ *                   type: string
+ *                   example: Nguyen Van A
+ *                 email:
+ *                   type: string
+ *                   example: example@gmail.com
+ *                 acc_status:
+ *                   type: string
+ *                   enum: [active, banned]
+ *                 role:
+ *                   type: string
+ *                   enum: [member, admin]
+ *                 gender:
+ *                   type: string
+ *                   enum: [male, female, other]
+ *                 address:
+ *                   type: string
+ *                   example: Dong Hoa, Di An, Binh Duong
+ *                 createdAt:
+ *                   type: string
+ *                   format: date
+ *                   description: Ngày tạo tài khoản
+ *                   example: 2025-05-29T06:18:51.000Z
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date
+ *                   description: Ngày cập nhật tài khoản
+ *                   example: 2025-05-29T06:18:51.000Z
+ */

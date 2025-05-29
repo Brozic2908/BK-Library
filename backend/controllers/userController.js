@@ -121,3 +121,10 @@ exports.updateUserByAdmin = async (req, res, next) => {
     next(err);
   }
 };
+
+/**
+ *  @openapi
+ *  components:
+ *    schemas:
+ *
+ */
