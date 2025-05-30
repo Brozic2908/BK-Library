@@ -121,3 +121,52 @@ exports.updateUserByAdmin = async (req, res, next) => {
     next(err);
   }
 };
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     getSuccessfulUser:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: string
+ *           example: "success"
+ *         data:
+ *           type: object
+ *           properties:
+ *             user:
+ *               type: object
+ *               properties:
+ *                 user_id:
+ *                   type: integer
+ *                   example: 1
+ *                 name:
+ *                   type: string
+ *                   example: Nguyen Van A
+ *                 email:
+ *                   type: string
+ *                   example: example@gmail.com
+ *                 acc_status:
+ *                   type: string
+ *                   enum: [active, banned]
+ *                 role:
+ *                   type: string
+ *                   enum: [member, admin]
+ *                 gender:
+ *                   type: string
+ *                   enum: [male, female, other]
+ *                 address:
+ *                   type: string
+ *                   example: Dong Hoa, Di An, Binh Duong
+ *                 createdAt:
+ *                   type: string
+ *                   format: date
+ *                   description: Ngày tạo tài khoản
+ *                   example: 2025-05-29T06:18:51.000Z
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date
+ *                   description: Ngày cập nhật tài khoản
+ *                   example: 2025-05-29T06:18:51.000Z
+ */

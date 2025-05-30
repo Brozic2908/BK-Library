@@ -15,7 +15,7 @@ process.on("uncaughtException", (err) => {
 const initializeDatabase = async () => {
   try {
     await connectDB();
-    await sequelize.sync({ alter: process.env.NODE_ENV === "development" });
+    await sequelize.sync({ alter: false });
     console.log("Đã đồng bộ hóa Database thành công.");
   } catch (error) {
     console.error("Lỗi khi đồng bộ hóa Database:", error);
