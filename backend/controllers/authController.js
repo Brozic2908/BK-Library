@@ -1,7 +1,6 @@
 // authController.js: Xử lý đăng nhập, đăng ký
 const jwt = require("jsonwebtoken");
 const { User } = require("../models");
-const sendMail = require("../services/sendMail");
 require("dotenv").config();
 
 // Tạo JWT Token
@@ -38,16 +37,6 @@ exports.register = async (req, res, next) => {
 
     // Loại bỏ mật khẩu từ response
     newUser.password = undefined;
-
-    // Gửi mail thống báo thành công
-    await sendMail({
-      emailReceiver: email,
-      subject: "Chúc mừng bạn đã đăng ký thành công hội viên BK Library",
-      html: `
-        <h1>Cảm ơn bạn đã tham gia làm hội viên của <span style="color: #82181a">BK Library</span></h1>
-        <p>Hiện tại bạn đã có thể tham gia mượn sách tại thư viện BK Library</p>
-      `,
-    });
 
     res.status(201).json({
       status: "success",
