@@ -1,35 +1,78 @@
-import React, { useState } from "react";
-import { books as bookData } from "../../data/Books/Books";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Pagination from "../../components/Pagination/Pagination";
 
+const API_BASE = "http://localhost:3000/api";
+
 const BookManagement = () => {
-  const [books, setBooks] = useState(bookData);
+  const [books, setBooks] = useState([]);
   const [editingBook, setEditingBook] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(books.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = books.slice(indexOfFirstItem, indexOfLastItem);
+  // Lấy dữ liệu sách từ API
+  const fetchBooks = async () => {
+    try {
+      const response = await axios.get(`${API_BASE}/books`);
+      setBooks(response.data.books || []);
+    } catch (error) {
+      console.error("Lỗi khi lấy sách:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBooks();
+  }, []);
+
+  // Thêm hoặc cập nhật sách
+  const handleSave = async () => {
+    try {
+      if (editingBook.book_id) {
+        await axios.put(`${API_BASE}/books/${editingBook.book_id}`, editingBook);
+      } else {
+        await axios.post(`${API_BASE}/books`, editingBook);
+      }
+      fetchBooks();
+      setShowModal(false);
+    } catch (error) {
+      console.error("Lỗi khi lưu sách:", error);
+    }
+  };
+
+  // Xóa sách
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_BASE}/books/${id}`);
+      fetchBooks();
+      setShowModal(false);
+    } catch (error) {
+      console.error("Lỗi khi xóa sách:", error);
+    }
+  };
 
   const handleEdit = (book) => {
-    setEditingBook({ ...book });
+    setEditingBook(book);
     setShowModal(true);
   };
 
-  const handleSave = () => {
-    setBooks((prevBooks) =>
-      prevBooks.map((b) => (b.id === editingBook.id ? editingBook : b))
-    );
-    setShowModal(false);
+  const handleAdd = () => {
+    setEditingBook({
+      title: "",
+      author: "",
+      genre: "",
+      publish_year: "",
+      stock: 0,
+      available_number: 0,
+      borrowed_number: 0,
+      image_url: "",
+    });
+    setShowModal(true);
   };
 
-  const handleDelete = (id) => {
-    setBooks((prevBooks) => prevBooks.filter((b) => b.id !== id));
-    setShowModal(false);
-  };
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = books.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <div className="p-4 sm:p-6">

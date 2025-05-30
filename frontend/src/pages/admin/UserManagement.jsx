@@ -1,15 +1,9 @@
-import React, { useState } from "react";
-import { users as userData } from "../../data/Books/Users";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Pagination from "../../components/Pagination/Pagination";
 
-const currentUser = {
-  id: 1,
-  role: "admin",
-  name: "Admin",
-};
-
 const UserManagement = () => {
-  const [users, setUsers] = useState(userData);
+  const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const itemsPerPage = 10;
@@ -20,23 +14,69 @@ const UserManagement = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = users.slice(indexOfFirstItem, indexOfLastItem);
 
+  useEffect(() => {
+    fetch("http://localhost:3000/api/users")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          setUsers(data.data.users);
+        } else {
+          console.error("Lỗi tải người dùng:", data.message);
+        }
+      })
+      .catch((err) => console.error("Lỗi kết nối:", err));
+  }, []);
+
   const handleEdit = (user) => {
     setEditingUser({ ...user });
     setShowModal(true);
   };
 
-  const handleStatusChange = (newStatus) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((u) =>
-        u.id === editingUser.id ? { ...u, status: newStatus } : u
-      )
-    );
-    setShowModal(false);
+  const handleStatusChange = async (newStatus) => {
+    try {
+      const res = await fetch(
+        `http://localhost:3033/api/users/${editingUser.id}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: newStatus }),
+        }
+      );
+      const data = await res.json();
+      if (data.status === "success") {
+        setUsers((prev) =>
+          prev.map((u) =>
+            u.id === editingUser.id ? { ...u, status: newStatus } : u
+          )
+        );
+        setShowModal(false);
+      } else {
+        alert("Lỗi cập nhật: " + data.message);
+      }
+    } catch (err) {
+      console.error("Lỗi:", err);
+    }
   };
 
-  const handleDelete = (id) => {
-    setUsers((prevUsers) => prevUsers.filter((u) => u.id !== id));
-    setShowModal(false);
+  const handleDelete = async (id) => {
+    try {
+      const confirmed = window.confirm("Bạn chắc chắn muốn xóa?");
+      if (!confirmed) return;
+      const res = await fetch(`http://localhost:3033/api/users/${id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.status === "success") {
+        setUsers((prev) => prev.filter((u) => u.id !== id));
+        setShowModal(false);
+      } else {
+        alert("Lỗi xoá: " + data.message);
+      }
+    } catch (err) {
+      console.error("Lỗi xoá:", err);
+    }
   };
 
   return (
