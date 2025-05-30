@@ -7,16 +7,16 @@ const router = express.Router();
 router.use(protect);
 
 // Routes dành cho admin
-router.get("/", restrictTo("Admin"), userController.getAllUsers);
+router.get("/", restrictTo("admin"), userController.getAllUsers);
 router.patch(
   "/:id/update",
-  restrictTo("Admin"),
+  restrictTo("admin"),
   userController.updateUserByAdmin
 );
 
 // Routes cho người dùng cập nhật thông tin cá nhân hoặc admin có thể cập nhật cho người dùng
-router.get("/:id", userController.getUserById);
-router.patch("/:id", userController.updateUser);
+router.get("/:id", protect, userController.getUserById);
+router.patch("/:id", protect, userController.updateUser);
 
 module.exports = router;
 
@@ -132,7 +132,7 @@ module.exports = router;
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/AdminUserUpdate'
+ *             $ref: '#/components/schemas/adminUserUpdate'
  *     responses:
  *       200:
  *         description: Cập nhật thành công
@@ -170,8 +170,8 @@ module.exports = router;
  *           enum: [male, female, other]
  *         role:
  *           type: string
- *           enum: [Member, Admin]
- *         acc_state:
+ *           enum: [Member, admin]
+ *         acc_status:
  *           type: string
  *           enum: [active, banned]
  *         createdAt:
@@ -195,15 +195,15 @@ module.exports = router;
  *         gender:
  *           type: string
  *
- *     AdminUserUpdate:
+ *     adminUserUpdate:
  *       allOf:
  *         - $ref: '#/components/schemas/UserUpdate'
  *         - type: object
  *           properties:
  *             role:
  *               type: string
- *               enum: [Member, Admin]
- *             acc_state:
+ *               enum: [Member, admin]
+ *             acc_status:
  *               type: string
  *               enum: [active, banned]
  *

@@ -82,12 +82,12 @@ exports.updateUser = async (req, res, next) => {
 // Cập nhật thông tin của người dùng (chỉ admin)
 exports.updateUserByAdmin = async (req, res, next) => {
   try {
-    const { name, email, phone, address, gender, role, acc_state } = req.body;
+    const { name, email, gender, role, acc_status } = req.body;
 
-    if (!role || !["Member", "Admin"].includes(role)) {
+    if (!role || !["member", "admin"].includes(role)) {
       return res.status(400).json({
         status: "fail",
-        message: "Vui lòng cung cấp vai trò hợp lệ (User, Admin)",
+        message: "Vui lòng cung cấp vai trò hợp lệ (member, admin)",
       });
     }
 
@@ -104,11 +104,9 @@ exports.updateUserByAdmin = async (req, res, next) => {
     await user.update({
       name: name || user.name,
       email: email || user.email,
-      phone: phone || user.phone,
-      address: address || user.address,
       gender: gender || user.gender,
       role: role || user.role,
-      acc_state: acc_state || user.acc_state,
+      acc_status: acc_status || user.acc_status,
     });
 
     res.status(200).json({
