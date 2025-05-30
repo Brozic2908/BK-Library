@@ -23,5 +23,6 @@ router.patch(
   "/:tx_id/updatedate", 
   transactionController.updateTransactionDates
 );
-
+router.delete('/:tx_id', transactionController.deleteTransaction);
+router.patch('/:tx_id/extend', transactionController.extendDueDate);
 module.exports = router;

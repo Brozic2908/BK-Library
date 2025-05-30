@@ -2,6 +2,8 @@ import { Link } from "react-router-dom"
 import React, { useEffect, useState } from 'react';
 import { CiFaceFrown } from "react-icons/ci";
 
+const API_BASE = "http://localhost:3000/api";
+
 function History() {
   const [orders, setOrders] = useState([]);
   const [status, setStatus] = useState('all');
@@ -19,7 +21,7 @@ function History() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:3033/api/transactions/2")
+    fetch(`${API_BASE}/transactions/2`)
       .then(res => res.json())
       .then(data => {
         if (data.status === "success") {
@@ -38,7 +40,48 @@ function History() {
       })
       .catch(err => console.error("Lỗi khi gọi API:", err));
   }, []);
-
+  
+  const handleCancel = (orderId) => {
+    if (window.confirm("Bạn có chắc chắn muốn hủy đơn này không?")) {
+      fetch(`${API_BASE}/transactions/${orderId}`, {
+        method: "DELETE"
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "success") {
+            alert("Đã hủy đơn thành công!");
+            setOrders(prev => prev.filter(o => o.id !== orderId));
+          } else {
+            alert(data.message || "Không thể hủy đơn.");
+          }
+        })
+        .catch(err => {
+          console.error("Lỗi khi hủy:", err);
+          alert("Có lỗi xảy ra khi hủy đơn.");
+        });
+    }
+  };
+  const handleExtend = (orderId) => {
+    fetch(`${API_BASE}/transactions/${orderId}/extend`, {
+      method: "PATCH"
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          alert("Đã gia hạn thành công!");
+          // Cập nhật lại ngày hạn trả nếu server trả về dữ liệu mới
+          setOrders(prev => prev.map(o =>
+            o.id === orderId ? { ...o, due_date: data.data.transaction.due_date } : o
+          ));
+        } else {
+          alert(data.message || "Không thể gia hạn.");
+        }
+      })
+      .catch(err => {
+        console.error("Lỗi khi gia hạn:", err);
+        alert("Có lỗi xảy ra khi gia hạn.");
+      });
+  };
   const convertStatus = (status) => {
     switch (status) {
       case "Returned": return "Đã trả";
@@ -144,6 +187,23 @@ function History() {
                                   <p className="text-gray-600">Ngày mượn: <span className="font-medium text-gray-700">{order.ngay_muon || "—"}</span></p>
                                   <p className="text-gray-600">Ngày trả: <span className="font-medium text-gray-700">{order.ngay_tra || "—"}</span></p>
                                   <p className="text-gray-600">Hạn trả: <span className="font-medium text-gray-700">{order.han_tra || "—"}</span></p>
+                                  {order.trang_thai === "Chờ mượn" && (
+                                    <button
+                                      onClick={() => handleCancel(order.id)}
+                                      className="text-sm px-3 py-1 font-medium rounded inline bg-red-500 text-red-800 text-white cursor-pointer"
+                                    >
+                                      Hủy
+                                    </button>
+                                  )}
+
+                                  {order.trang_thai === "Đang mượn" && (
+                                    <button
+                                      onClick={() => handleExtend(order.id)}
+                                      className="text-sm px-3 py-1 font-medium rounded inline bg-blue-500 text-red-800 text-white cursor-pointer"
+                                    >
+                                      Gia hạn
+                                    </button>
+                                  )}
                                 </div>
                               </div>
                               <div className="md:flex md:flex-col md:justify-between md:items-end mt-2 md:mt-0">
