@@ -5,7 +5,6 @@ exports.createTransaction = async (req, res, next) => {
   try {
     const { member_id, book_id, schedule_date } = req.body;
 
-    // Kiểm tra người dùng tồn tại
     const user = await User.findByPk(member_id);
     if (!user) {
       return res.status(404).json({
@@ -14,7 +13,6 @@ exports.createTransaction = async (req, res, next) => {
       });
     }
 
-    // Kiểm tra sách tồn tại
     const book = await Book.findByPk(book_id);
     if (!book) {
       return res.status(404).json({
@@ -23,7 +21,6 @@ exports.createTransaction = async (req, res, next) => {
       });
     }
 
-    // Tạo giao dịch mới
     const transaction = await Transaction.create({
       member_id,
       book_id,
@@ -129,7 +126,7 @@ exports.updateTransactionStatus = async (req, res, next) => {
       });
     }
 
-    const transaction = await Transaction.findByPk(tx_id);
+  const transaction = await Transaction.findByPk(tx_id);
     if (!transaction) {
       return res.status(404).json({
         status: "fail",
@@ -137,7 +134,6 @@ exports.updateTransactionStatus = async (req, res, next) => {
       });
     }
 
-    // Nếu là trạng thái thay đổi sang Borrowing hoặc Returned thì cần cập nhật Book
     if (status === 'Borrowing' || status === 'Returned') {
       const book = await Book.findByPk(transaction.book_id);
       if (!book) {
@@ -148,29 +144,26 @@ exports.updateTransactionStatus = async (req, res, next) => {
       }
 
       if (status === 'Borrowing') {
-        // Kiểm tra còn sách hay không
-        if (book.stock <= 0) {
+        if (book.available_number <= 0) {
           return res.status(400).json({
             status: "fail",
             message: "Không còn sách để mượn",
           });
         }
 
-        book.stock -= 1;
+        book.available_number -= 1;
         book.borrowed_number += 1;
       } else if (status === 'Returned') {
-        // Chỉ trả sách nếu trước đó thực sự đang mượn
         if (transaction.status !== 'Borrowing') {
           return res.status(400).json({
             status: "fail",
             message: "Chỉ có thể trả sách sau khi đã mượn",
           });
         }
-
-        book.stock += 1;
-        book.borrowed_number = Math.max(0, book.borrowed_number - 1); // tránh âm
-        transaction.return_date = new Date(); // Cập nhật ngày trả
       }
+        book.available_number += 1;
+        book.borrowed_number = Math.max(0, book.borrowed_number - 1);
+        transaction.return_date = new Date(); 
 
       await book.save();
     }
@@ -193,7 +186,6 @@ exports.updateTransactionDates = async (req, res, next) => {
     const { tx_id } = req.params;
     const { schedule_date, borrow_date, due_date, return_date } = req.body;
 
-    // Tìm giao dịch
     const transaction = await Transaction.findByPk(tx_id);
     if (!transaction) {
       return res.status(404).json({
@@ -202,7 +194,6 @@ exports.updateTransactionDates = async (req, res, next) => {
       });
     }
 
-    // Cập nhật các trường ngày nếu có truyền vào
     if (schedule_date !== undefined) transaction.schedule_date = schedule_date;
     if (borrow_date !== undefined) transaction.borrow_date = borrow_date;
     if (due_date !== undefined) transaction.due_date = due_date;
@@ -213,6 +204,71 @@ exports.updateTransactionDates = async (req, res, next) => {
     res.status(200).json({
       status: "success",
       message: "Cập nhật ngày giao dịch thành công",
+      data: { transaction },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.deleteTransaction = async (req, res, next) => {
+  try {
+    const { tx_id } = req.params;
+
+    const transaction = await Transaction.findByPk(tx_id);
+    if (!transaction) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Không tìm thấy giao dịch với ID này",
+      });
+    }
+
+    if (['Borrowing', 'Returned'].includes(transaction.status)) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Không thể xoá giao dịch đã mượn hoặc đã trả",
+      });
+    }
+
+    await transaction.destroy();
+
+    res.status(200).json({
+      status: "success",
+      message: "Xoá giao dịch thành công",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.extendDueDate = async (req, res, next) => {
+  try {
+    const { tx_id } = req.params;
+
+    const transaction = await Transaction.findByPk(tx_id);
+    if (!transaction) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Không tìm thấy giao dịch với ID này",
+      });
+    }
+
+    if (transaction.status !== 'Borrowing') {
+      return res.status(400).json({
+        status: "fail",
+        message: "Chỉ có thể gia hạn với sách đang được mượn",
+      });
+    }
+
+    const oldDueDate = new Date(transaction.due_date);
+    const extendedDate = new Date(oldDueDate.setDate(oldDueDate.getDate() + 15));
+    transaction.due_date = extendedDate;
+
+    await transaction.save();
+
+    res.status(200).json({
+      status: "success",
+      message: "Gia hạn hạn trả thành công (+15 ngày)",
       data: { transaction },
     });
   } catch (error) {

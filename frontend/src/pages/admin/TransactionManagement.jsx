@@ -13,8 +13,10 @@ const TransactionManagement = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = transactions.slice(indexOfFirstItem, indexOfLastItem);
 
+  const API_BASE = "http://localhost:3000/api";
+
   useEffect(() => {
-    fetch("http://localhost:3033/api/transactions")
+    fetch(`${API_BASE}/transactions`)
       .then((res) => res.json())
       .then((data) => {
         if (data.status === "success") {
@@ -60,7 +62,7 @@ const TransactionManagement = () => {
 
     try {
       if (hasStatusChanged) {
-        const res = await fetch(`http://localhost:3033/api/transactions/${editingTransaction.id}/update`, {
+        const res = await fetch(`${API_BASE}/transactions/${editingTransaction.id}/update`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ status: editingTransaction.status }),
@@ -75,7 +77,7 @@ const TransactionManagement = () => {
       }
 
       if (hasDateChanged) {
-        const res = await fetch(`http://localhost:3033/api/transactions/${editingTransaction.id}/updatedate`, {
+        const res = await fetch(`${API_BASE}/api/transactions/${editingTransaction.id}/updatedate`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -111,7 +113,25 @@ const TransactionManagement = () => {
     }
   };
   const handleDelete = (id) => {
-    setTransactions((prev) => prev.filter((t) => t.id !== id));
+    if (window.confirm("Bạn có chắc chắn muốn hủy đơn này không?")) {
+      fetch(`${API_BASE}/transactions/${id}`, {
+        method: "DELETE"
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "success") {
+            alert("Đã hủy đơn thành công!");
+            setTransactions((prev) => prev.filter((t) => t.id !== id));
+          } else {
+            alert(data.message || "Không thể hủy đơn.");
+          }
+        })
+        .catch(err => {
+          console.error("Lỗi khi hủy:", err);
+          alert("Có lỗi xảy ra khi hủy đơn.");
+        });
+    }
+
     setShowModal(false);
   };
 
@@ -253,12 +273,12 @@ const TransactionManagement = () => {
                 >
                   Lưu
                 </button>
-                {/* <button
+                <button
                   onClick={() => handleDelete(editingTransaction.id)}
                   className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
                 >
                   Xóa
-                </button> */}
+                </button>
                 <button
                   onClick={() => setShowModal(false)}
                   className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500"
