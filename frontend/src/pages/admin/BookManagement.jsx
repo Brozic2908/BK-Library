@@ -77,7 +77,15 @@ const BookManagement = () => {
   return (
     <div className="p-4 sm:p-6">
       <div className="overflow-x-auto bg-white rounded-2xl shadow-lg p-4 sm:p-6">
-        <h1 className="text-xl font-bold mb-4">Quản lý sách</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-xl font-bold">Quản lý sách</h1>
+        <button
+          onClick={handleAdd}
+          className="bg-purple-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-purple-700"
+        >
+          Thêm sách
+        </button>
+      </div>
         <table className="min-w-full table-auto text-left text-sm sm:text-base">
           <thead className="bg-gray-100">
             <tr>
