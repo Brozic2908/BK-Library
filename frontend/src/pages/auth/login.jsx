@@ -1,8 +1,65 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { authService } from "../../services";
+import { toast } from "react-toastify";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    const role = localStorage.getItem("role");
+    const token = localStorage.getItem("token");
+
+    console.log("Current role:", role);
+    console.log("Current token:", token);
+    console.log("Current path:", location.pathname);
+
+    if (token && role) {
+      if (role === "admin") {
+        console.log("Redirecting to admin...");
+        navigate("/admin", { replace: true });
+      } else {
+        console.log("Redirecting to home...");
+        navigate("/", { replace: true });
+      }
+    }
+  }, [navigate, location]);
+
+  const handleLogin = async () => {
+    try {
+      setIsLoading(true);
+      const response = await authService.login(email, password);
+
+      // Lưu token và chuyển hướng trang
+      if (response?.token && response?.data?.user?.role) {
+        localStorage.setItem("token", response.token);
+        localStorage.setItem("userId", response.data?.user?.user_id);
+        localStorage.setItem("role", response.data?.user?.role);
+        if (response.data?.user?.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
+        toast.success("Đăng nhập thành công!");
+      } else {
+        toast.error(
+          "Đăng nhập thất bại! Tài khoản hoặc mật khẩu bạn chưa chính xác"
+        );
+      }
+    } catch (err) {
+      console.warn("Login Fail: ", err);
+      toast.error("Đăng nhập thất bại! Kiểm tra lại tài khoản hoặc mật khẩu.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="flex min-h-screen">
@@ -53,12 +110,20 @@ export default function LoginPage() {
             ĐĂNG NHẬP ĐỂ TIẾP TỤC
           </p>
 
-          <form className="space-y-4">
+          <form
+            className="space-y-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleLogin();
+            }}
+          >
             {/* Email */}
             <div>
               <input
                 type="email"
                 placeholder="example@hcmut.edu.vn"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700"
               />
             </div>
@@ -68,6 +133,8 @@ export default function LoginPage() {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="*********"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-md pr-12 focus:outline-none focus:ring-2 focus:ring-red-700"
               />
               <button
@@ -82,10 +149,17 @@ export default function LoginPage() {
             {/* Submit */}
             <button
               type="submit"
+              disabled={isLoading}
               className="w-full bg-[#960000] hover:bg-red-900 text-white py-3 rounded-md text-sm font-semibold flex items-center justify-center gap-2"
             >
-              Tiến hành đến Tài khoản của tôi
-              <span className="ml-2">→</span>
+              {isLoading ? (
+                <span>Đang đăng nhập...</span>
+              ) : (
+                <>
+                  Tiến hành đến Tài khoản của tôi
+                  <span className="ml-2">→</span>
+                </>
+              )}
             </button>
           </form>
 

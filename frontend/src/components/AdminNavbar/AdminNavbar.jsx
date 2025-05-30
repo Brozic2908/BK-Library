@@ -70,7 +70,12 @@ export default function AdminNavbar({
       {/* Logout button */}
       <div className="absolute bottom-0 w-full p-4 border-t border-gray-800">
         <button
-          onClick={onLogout}
+          onClick={() => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("role");
+            localStorage.removeItem("userId");
+            onLogout;
+          }}
           className="flex items-center w-full px-4 py-3 text-gray-300 transition-colors rounded-md hover:bg-gray-800 hover:text-white"
         >
           <LogOut size={20} className="mr-3" />

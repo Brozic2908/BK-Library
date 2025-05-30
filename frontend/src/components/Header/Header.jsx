@@ -1,7 +1,14 @@
 // File: src/components/Header.jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaUser, FaSearch, FaHistory, FaLock, FaSignOutAlt } from "react-icons/fa";
+import {
+  FaUser,
+  FaSearch,
+  FaHistory,
+  FaLock,
+  FaSignOutAlt,
+} from "react-icons/fa";
+import { userService } from "../../services";
 
 const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -9,8 +16,30 @@ const Header = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
-  const username = "User1";
-  const email = "user1@example.com";
+  const [userData, setUserData] = useState({
+    acc_status: "",
+    email: "",
+    gender: "",
+    name: "",
+    role: "",
+    user_id: 0,
+  });
+
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    console.log("UserID:", userId);
+    if (userId) {
+      userService
+        .getUserById(userId)
+        .then((data) => {
+          console.log("User Data:", data);
+          if (data) setUserData(data.data.user);
+        })
+        .catch((err) => {
+          console.error("Error fetching user data:", err);
+        });
+    }
+  }, []);
   const avatar = "/asset/images/avatar.png";
 
   const handleSearch = (e) => {
@@ -35,16 +64,25 @@ const Header = () => {
 
         {/* Menu */}
         <div className="flex items-center space-x-6">
-          <Link to="/" className="text-base text-white hidden md:block hover:underline">
+          <Link
+            to="/"
+            className="text-base text-white hidden md:block hover:underline"
+          >
             Trang chủ
           </Link>
-          <Link to="/my/history" className="text-base text-white hidden md:block hover:underline">
+          <Link
+            to="/my/history"
+            className="text-base text-white hidden md:block hover:underline"
+          >
             Lịch sử mua hàng
           </Link>
         </div>
 
         {/* Search */}
-        <form onSubmit={handleSearch} className="flex items-center mx-4 ml-6 flex-1 justify-center">
+        <form
+          onSubmit={handleSearch}
+          className="flex items-center mx-4 ml-6 flex-1 justify-center"
+        >
           <button
             type="submit"
             className="bg-white text-white rounded-l-xl p-2 hover:bg-gray-200 h-10"
@@ -64,22 +102,36 @@ const Header = () => {
         {isLoggedIn ? (
           <div className="relative">
             <div className="flex items-center space-x-2 text-white">
-              <span className="hidden md:block">{username}</span>
+              <span className="hidden md:block">{userData.name}</span>
               <button onClick={() => setDropdownOpen(!dropdownOpen)}>
-                <img src={avatar} alt="avatar" className="w-8 h-8 rounded-full cursor-pointer" />
+                <img
+                  src={avatar}
+                  alt="avatar"
+                  className="w-8 h-8 rounded-full cursor-pointer"
+                />
               </button>
 
               {dropdownOpen && (
                 <div className="absolute right-0 top-10 bg-white border rounded-lg shadow-lg">
                   <div className="pt-4 pb-4 pr-3 pl-3 w-72">
                     <div className="flex gap-2 w-full">
-                      <img src={avatar} alt="user avatar" className="w-10 h-10 rounded-full cursor-pointer" />
+                      <img
+                        src={avatar}
+                        alt="user avatar"
+                        className="w-10 h-10 rounded-full cursor-pointer"
+                      />
                       <div className="flex-1">
-                        <div className="font-bold text-black">{username}</div>
-                        <div className="text-sm text-gray-700">{email}</div>
+                        <div className="font-bold text-black">
+                          {userData.name}
+                        </div>
+                        <div className="text-sm text-gray-700">
+                          {userData.email}
+                        </div>
                       </div>
                     </div>
-                    <div className="text-xs text-gray-500 pt-2">Quản lý tài khoản</div>
+                    <div className="text-xs text-gray-500 pt-2">
+                      Quản lý tài khoản
+                    </div>
                     <ul className="pt-2 text-sm text-black">
                       <li>
                         <Link
@@ -116,6 +168,9 @@ const Header = () => {
                           to="/"
                           className="px-3 py-2 hover:bg-red-500 hover:text-white cursor-pointer rounded-lg flex gap-1 items-center"
                           onClick={() => {
+                            localStorage.removeItem("token");
+                            localStorage.removeItem("role");
+                            localStorage.removeItem("userId");
                             setDropdownOpen(false);
                             setIsLoggedIn(false);
                           }}

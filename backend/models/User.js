@@ -45,7 +45,7 @@
 //       type: DataTypes.STRING,
 //       allowNull: true,
 //     },
-//     acc_state: {
+//     acc_status: {
 //       type: DataTypes.ENUM("active", "banned"),
 //       defaultValue: "active",
 //     },
@@ -76,7 +76,7 @@
 
 // module.exports = User;
 
-//thay đổi vì data sai 
+//thay đổi vì data sai
 const { DataTypes } = require("sequelize");
 const bcrypt = require("bcrypt");
 const { sequelize } = require("../config/database");
@@ -84,7 +84,8 @@ const { sequelize } = require("../config/database");
 const User = sequelize.define(
   "User",
   {
-    user_id: {                 // sửa tên đúng với DB
+    user_id: {
+      // sửa tên đúng với DB
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
@@ -108,7 +109,8 @@ const User = sequelize.define(
         len: [8, 100],
       },
     },
-    acc_status: {             // đổi theo DB
+    acc_status: {
+      // đổi theo DB
       type: DataTypes.ENUM("active", "banned"),
       allowNull: false,
       defaultValue: "active",
@@ -118,7 +120,8 @@ const User = sequelize.define(
       allowNull: false,
       defaultValue: "member",
     },
-    gender: {                 // sửa typo
+    gender: {
+      // sửa typo
       type: DataTypes.ENUM("male", "female", "other"),
       allowNull: false,
       defaultValue: "male",
@@ -129,8 +132,8 @@ const User = sequelize.define(
     },
   },
   {
-    tableName: "User",       // tên bảng đúng
-    timestamps: false,       // bảng không có createdAt, updatedAt
+    tableName: "User", // tên bảng đúng
+    timestamps: false, // bảng không có createdAt, updatedAt
     hooks: {
       beforeCreate: async (user) => {
         if (user.password) {
