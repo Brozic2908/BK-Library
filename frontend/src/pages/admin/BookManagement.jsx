@@ -1,40 +1,91 @@
-import React, { useState } from "react";
-import { books as bookData } from "../../data/Books/Books";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Pagination from "../../components/Pagination/Pagination";
 
+const API_BASE = "http://localhost:3000/api";
+
 const BookManagement = () => {
-  const [books, setBooks] = useState(bookData);
+  const [books, setBooks] = useState([]);
   const [editingBook, setEditingBook] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(books.length / itemsPerPage);
+  // Lấy dữ liệu sách từ API
+  const fetchBooks = async () => {
+    try {
+      const response = await axios.get(`${API_BASE}/books`);
+      setBooks(response.data.books || []);
+    } catch (error) {
+      console.error("Lỗi khi lấy sách:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBooks();
+  }, []);
+
+  // Thêm hoặc cập nhật sách
+  const handleSave = async () => {
+    try {
+      if (editingBook.book_id) {
+        await axios.put(`${API_BASE}/books/${editingBook.book_id}`, editingBook);
+      } else {
+        await axios.post(`${API_BASE}/books`, editingBook);
+      }
+      fetchBooks();
+      setShowModal(false);
+    } catch (error) {
+      console.error("Lỗi khi lưu sách:", error);
+    }
+  };
+
+  // Xóa sách
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_BASE}/books/${id}`);
+      fetchBooks();
+      setShowModal(false);
+    } catch (error) {
+      console.error("Lỗi khi xóa sách:", error);
+    }
+  };
+
+  const handleEdit = (book) => {
+    setEditingBook(book);
+    setShowModal(true);
+  };
+
+  const handleAdd = () => {
+    setEditingBook({
+      title: "",
+      author: "",
+      genre: "",
+      publish_year: "",
+      stock: 0,
+      available_number: 0,
+      borrowed_number: 0,
+      image_url: "",
+    });
+    setShowModal(true);
+  };
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = books.slice(indexOfFirstItem, indexOfLastItem);
 
-  const handleEdit = (book) => {
-    setEditingBook({ ...book });
-    setShowModal(true);
-  };
-
-  const handleSave = () => {
-    setBooks((prevBooks) =>
-      prevBooks.map((b) => (b.id === editingBook.id ? editingBook : b))
-    );
-    setShowModal(false);
-  };
-
-  const handleDelete = (id) => {
-    setBooks((prevBooks) => prevBooks.filter((b) => b.id !== id));
-    setShowModal(false);
-  };
-
   return (
     <div className="p-4 sm:p-6">
       <div className="overflow-x-auto bg-white rounded-2xl shadow-lg p-4 sm:p-6">
-        <h1 className="text-xl font-bold mb-4">Quản lý sách</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-xl font-bold">Quản lý sách</h1>
+        <button
+          onClick={handleAdd}
+          className="bg-purple-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-purple-700"
+        >
+          Thêm sách
+        </button>
+      </div>
         <table className="min-w-full table-auto text-left text-sm sm:text-base">
           <thead className="bg-gray-100">
             <tr>
