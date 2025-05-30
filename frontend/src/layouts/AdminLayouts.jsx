@@ -29,6 +29,7 @@ const AdminLayouts = () => {
     // Add your logout logic here
     localStorage.removeItem("token");
     localStorage.removeItem("role");
+    localStorage.removeItem("role");
     navigate("/login");
   };
 

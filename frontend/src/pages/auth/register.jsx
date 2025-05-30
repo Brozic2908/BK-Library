@@ -1,8 +1,41 @@
 import { useState } from "react";
 import { Eye, EyeOff, User, Mail, Lock } from "lucide-react";
+import { authService } from "../../services";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+
+  const handleRegister = async () => {
+    try {
+      setIsLoading(true);
+      const userData = {
+        name,
+        email,
+        password,
+      };
+      const response = await authService.register(userData);
+
+      // Lưu token và chuyể hướng trang
+      if (response?.token && response?.data?.user?.role) {
+        localStorage.setItem("token", response.token);
+        navigate("/login");
+        toast.success("Đăng ký thành công. Vui lòng Đăng nhập để tiếp tục");
+      }
+    } catch (err) {
+      console.warn("Register Fail: ", err);
+      toast.error("Đăng ký thất bại! Kiểm tra lại thông tin đăng ký.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="flex min-h-screen">
@@ -33,7 +66,10 @@ export default function RegisterPage() {
       <div className="w-3/5 bg-[#f3f5f5] flex flex-col justify-center px-20 relative">
         {/* Top Links */}
         <div className="flex justify-between text-sm mb-6 absolute top-4 left-6 right-6">
-          <a href="/" className="text-gray-600 hover:underline flex items-center gap-1">
+          <a
+            href="/"
+            className="text-gray-600 hover:underline flex items-center gap-1"
+          >
             ← Trở về Trang chủ
           </a>
           <span>
@@ -53,12 +89,20 @@ export default function RegisterPage() {
             ĐĂNG KÝ VÀ THAM GIA CÙNG VỚI CHÚNG TÔI
           </p>
 
-          <form className="space-y-4">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleRegister();
+            }}
+            className="space-y-4"
+          >
             {/* Full Name */}
             <div className="relative">
               <input
                 type="text"
                 placeholder="Johnson Doe"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-md pl-10 focus:outline-none focus:ring-2 focus:ring-red-700"
               />
               <User className="absolute left-3 top-3 text-gray-400" size={20} />
@@ -69,6 +113,8 @@ export default function RegisterPage() {
               <input
                 type="email"
                 placeholder="example@hcmut.edu.vn"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-md pl-10 focus:outline-none focus:ring-2 focus:ring-red-700"
               />
               <Mail className="absolute left-3 top-3 text-gray-400" size={20} />
@@ -79,6 +125,8 @@ export default function RegisterPage() {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="*********"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-md pl-10 pr-12 focus:outline-none focus:ring-2 focus:ring-red-700"
               />
               <Lock className="absolute left-3 top-3 text-gray-400" size={20} />
@@ -94,10 +142,17 @@ export default function RegisterPage() {
             {/* Submit */}
             <button
               type="submit"
+              disabled={isLoading}
               className="w-full bg-[#960000] hover:bg-red-900 text-white py-3 rounded-md text-sm font-semibold flex items-center justify-center gap-2"
             >
-              Trở thành thành viên
-              <span className="ml-2">→</span>
+              {isLoading ? (
+                <span>Đang tải ...</span>
+              ) : (
+                <>
+                  Trở thành thành viên
+                  <span className="ml-2">→</span>
+                </>
+              )}
             </button>
           </form>
         </div>

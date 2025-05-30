@@ -1,8 +1,32 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { userService } from "../../services";
 
 function Profile() {
-  const username = "User1";
-  const email = "user1@example.com";
+  const [userData, setUserData] = useState({
+    acc_status: "",
+    email: "",
+    gender: "",
+    name: "",
+    role: "",
+    user_id: 0,
+  });
+
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    console.log("UserID:", userId);
+    if (userId) {
+      userService
+        .getUserById(userId)
+        .then((data) => {
+          console.log("User Data:", data);
+          if (data) setUserData(data.data.user);
+        })
+        .catch((err) => {
+          console.error("Error fetching user data:", err);
+        });
+    }
+  }, []);
   const avatar = "/asset/images/avatar.png";
 
   return (
@@ -10,7 +34,7 @@ function Profile() {
       <div className="overflow-y-auto">
         <main className="container max-w-screen-1200 min-h-screen mx-auto px-1 lg:px-0">
           <div className="flex gap-4 pt-6">
-            <div className="w-1/4 bg-white hidden lg:block flex flex-col text-gray-800 p-4 shadow-md rounded-lg ">
+            <div className="w-1/4 bg-white lg:block flex flex-col text-gray-800 p-4 shadow-md rounded-lg ">
               <nav>
                 <ul>
                   <li className="mb-4">
@@ -50,6 +74,9 @@ function Profile() {
                       to="/"
                       className="block py-2 px-4 text-gray-800 rounded hover:bg-red-500 hover:shadow-lg hover:-translate-y-1 hover:text-white transform transition-all duration-200 border-t border-gray-500"
                       onClick={() => {
+                        localStorage.removeItem("token");
+                        localStorage.removeItem("role");
+                        localStorage.removeItem("userId");
                         setDropdownOpen(false);
                         setIsLoggedIn(false);
                       }}
@@ -74,8 +101,8 @@ function Profile() {
                   />
                 </div>
                 <div className="flex-1">
-                  <div className="text-2xl font-bold">{username}</div>
-                  <div className="text-sm text-gray-700">{email}</div>
+                  <div className="text-2xl font-bold">{userData.name}</div>
+                  <div className="text-sm text-gray-700">{userData.email}</div>
                 </div>
               </div>
 

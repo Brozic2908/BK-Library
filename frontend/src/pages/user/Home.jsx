@@ -78,10 +78,7 @@ const Home = () => {
                 className="cursor-pointer"
                 onClick={() => goToBookDetail(book.book_id)}
               >
-                <BookCard
-                  title={book.title}
-                  image={book.image_url || ""}
-                />
+                <BookCard title={book.title} image={book.image_url || ""} />
               </div>
             ))
           ) : (

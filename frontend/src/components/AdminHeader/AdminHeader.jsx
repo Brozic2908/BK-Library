@@ -23,6 +23,9 @@ export default function AdminHeader({ toggleSidebar, pageTitle }) {
 
   const handleConfirmYes = () => {
     if (confirmAction === "logout" || confirmAction === "lock") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      localStorage.removeItem("userId");
       navigate("/login");
     }
     setConfirmAction(null);
@@ -70,7 +73,10 @@ export default function AdminHeader({ toggleSidebar, pageTitle }) {
 
           {/* Avatar + Dropdown */}
           <div className="relative" ref={menuRef}>
-            <div className="flex items-center cursor-pointer" onClick={handleToggleMenu}>
+            <div
+              className="flex items-center cursor-pointer"
+              onClick={handleToggleMenu}
+            >
               <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-medium">
                 A
               </div>
@@ -104,7 +110,9 @@ export default function AdminHeader({ toggleSidebar, pageTitle }) {
         <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50 backdrop-blur-sm">
           <div className="bg-white p-6 rounded-xl shadow-lg w-80 space-y-4 text-center">
             <h2 className="text-lg font-bold">
-              {confirmAction === "logout" ? "Bạn có muốn đăng xuất?" : "Bạn có muốn khóa tài khoản?"}
+              {confirmAction === "logout"
+                ? "Bạn có muốn đăng xuất?"
+                : "Bạn có muốn khóa tài khoản?"}
             </h2>
             <div className="flex justify-center space-x-4 mt-4">
               <button
