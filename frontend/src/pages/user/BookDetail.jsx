@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import BookCard from "../../components/BookCard/BookCard";
+import { toast } from "react-toastify";
 
 export default function BookDetail() {
   const { id } = useParams();
@@ -17,6 +18,7 @@ export default function BookDetail() {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const userId = localStorage.getItem("userId")
 
   useEffect(() => {
     // Validate id before fetching
@@ -69,30 +71,18 @@ export default function BookDetail() {
   }, [id]);
 
   const handleConfirmBooking = async () => {
-    const userId = localStorage.getItem("userId");
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
 
-    const selectedBorrowDate = new Date(borrowDate);
-    selectedBorrowDate.setHours(0, 0, 0, 0);
-
-    const selectedReturnDate = new Date(returnDate);
-    selectedReturnDate.setHours(0, 0, 0, 0);
-
-    if (!borrowDate || !returnDate) {
-      setError("⚠️ Vui lòng chọn đầy đủ ngày mượn và ngày trả sách.");
+    if (!borrowDate) {
+      toast.error(
+        " Vui lòng chọn đầy đủ ngày mượn."
+      );
+      // setError(" Vui lòng chọn đầy đủ ngày mượn và ngày trả sách.");
       return;
     }
-
-    if (selectedBorrowDate < today) {
-      setError("⚠️ Ngày mượn không được nhỏ hơn ngày hiện tại.");
-      return;
-    }
-
-    if (selectedBorrowDate >= selectedReturnDate) {
-      setError("⚠️ Ngày mượn phải trước ngày trả sách.");
-      return;
-    }
+    // if (new Date(borrowDate) >= new Date(returnDate)) {
+    //   setError(" Ngày mượn phải trước ngày trả sách.");
+    //   return;
+    // }
 
     setError("");
 
@@ -102,7 +92,8 @@ export default function BookDetail() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          member_id: Number(userId),
+          member_id: userId, // đảm bảo bạn có biến user chứa id người dùng
+
           book_id: id,
           schedule_date: borrowDate,
         }),
@@ -115,38 +106,27 @@ export default function BookDetail() {
         );
       }
 
-      const txId = createData.data.transaction.tx_id;
 
-      // 2. Cập nhật trạng thái sang 'Borrowing'
-      const updateRes = await fetch(`/api/transactions/${txId}/update`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "Borrowing" }),
-      });
+      // const txId = createData.data.transaction.tx_id;
 
-      const updateData = await updateRes.json();
-      if (!updateRes.ok) {
-        throw new Error(
-          updateData.message || "Lỗi khi cập nhật trạng thái mượn."
-        );
-      }
+      // // 2. Cập nhật trạng thái sang 'Borrowing'
+      // const updateRes = await fetch(`/api/transactions/${txId}/status`, {
+      //   method: "PATCH",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ status: "Borrowing" }),
+      // });
 
-      // 3. Cập nhật số lượng sách available_number - 1
-      const newQuantity = book.available_number - 1;
-      const updateBookRes = await fetch(`/api/books/${id}/update-quantity`, {
-        method: "PATCH", 
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ available_number: newQuantity }),
-      });
-      const updateBookData = await updateBookRes.json();
-      if (!updateBookRes.ok) {
-        throw new Error(
-          updateBookData.message || "Lỗi khi cập nhật số lượng sách."
-        );
-      }
+      // const updateData = await updateRes.json();
+      // if (!updateRes.ok) {
+      //   throw new Error(
+      //     updateData.message || "Lỗi khi cập nhật trạng thái mượn."
+      //   );
+      // }
 
-      // ✅ Thành công
-      setSuccessMessage("✅ Đặt sách thành công!");
+      //  Thành công
+      toast.success(" Đặt sách thành công!");
+      // setSuccessMessage(" Đặt sách thành công!");
+
       setBook((prev) => ({
         ...prev,
         available_number: prev.available_number - 1,
@@ -352,7 +332,7 @@ export default function BookDetail() {
             />
           </label>
 
-          <label className="block mb-2 font-semibold">
+          {/* <label className="block mb-2 font-semibold">
             Ngày trả:
             <input
               type="date"
@@ -361,7 +341,7 @@ export default function BookDetail() {
               className="w-full border rounded px-2 py-1 mt-1"
               min={borrowDate || new Date().toISOString().split("T")[0]}
             />
-          </label>
+          </label> */}
 
           {error && <p className="text-red-600 mb-2">{error}</p>}
           {successMessage && (

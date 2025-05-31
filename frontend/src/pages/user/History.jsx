@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { CiFaceFrown } from "react-icons/ci";
+import { toast } from "react-toastify";
 
 const API_BASE = "http://localhost:3000/api";
 
@@ -9,7 +10,8 @@ function History() {
   const [status, setStatus] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 3;
-
+  const userId = localStorage.getItem("userId")
+  console.log(userId)
   const getStatusColor = (trang_thai) => {
     switch (trang_thai) {
       case "Đã trả":
@@ -26,7 +28,7 @@ function History() {
   };
 
   useEffect(() => {
-    fetch(`${API_BASE}/transactions/2`)
+    fetch(`${API_BASE}/transactions/${userId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.status === "success") {
@@ -54,15 +56,19 @@ function History() {
         .then((res) => res.json())
         .then((data) => {
           if (data.status === "success") {
-            alert("Đã hủy đơn thành công!");
+            // alert("Đã hủy đơn thành công!");
+            toast.success("Đã hủy đơn thành công!");
             setOrders((prev) => prev.filter((o) => o.id !== orderId));
           } else {
-            alert(data.message || "Không thể hủy đơn.");
+            toast.error("Không thể hủy đơn.");
           }
         })
         .catch((err) => {
           console.error("Lỗi khi hủy:", err);
-          alert("Có lỗi xảy ra khi hủy đơn.");
+          // alert("Có lỗi xảy ra khi hủy đơn.");
+          toast.error(
+            "Có lỗi xảy ra khi hủy đơn."
+          );
         });
     }
   };
@@ -73,8 +79,7 @@ function History() {
       .then((res) => res.json())
       .then((data) => {
         if (data.status === "success") {
-          alert("Đã gia hạn thành công!");
-          // Cập nhật lại ngày hạn trả nếu server trả về dữ liệu mới
+          toast.success("Đã gia hạn thành công!");
           setOrders((prev) =>
             prev.map((o) =>
               o.id === orderId
@@ -83,12 +88,18 @@ function History() {
             )
           );
         } else {
-          alert(data.message || "Không thể gia hạn.");
+          // alert("Không thể gia hạn.");
+          toast.error(
+            "Không thể gia hạn."
+          );
         }
       })
       .catch((err) => {
         console.error("Lỗi khi gia hạn:", err);
-        alert("Có lỗi xảy ra khi gia hạn.");
+        // alert("Có lỗi xảy ra khi gia hạn.");
+        toast.error(
+          "Có lỗi xảy ra khi gia hạn."
+        );
       });
   };
   const convertStatus = (status) => {
