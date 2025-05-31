@@ -38,12 +38,13 @@ const Header = () => {
         .catch((err) => {
           console.error("Error fetching user data:", err);
         });
-      setIsLoggedIn(true)
+      setIsLoggedIn(true);
     }
   }, []);
   // const avatar = "/asset/images/avatar.png";
-  const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=random`;
-
+  const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+    userData.name
+  )}&background=random`;
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -77,7 +78,7 @@ const Header = () => {
             to="/my/history"
             className="text-base text-white hidden md:block hover:underline"
           >
-            Lịch sử muợn sách
+            Lịch sử mượn sách
           </Link>
         </div>
 
@@ -153,7 +154,7 @@ const Header = () => {
                           onClick={() => setDropdownOpen(false)}
                         >
                           <FaHistory className="h-6 mr-2" />
-                          <div>Lịch sử mua hàng</div>
+                          <div>Lịch sử mượn sách</div>
                         </Link>
                       </li>
                       <li>
@@ -163,7 +164,7 @@ const Header = () => {
                           onClick={() => setDropdownOpen(false)}
                         >
                           <FaLock className="h-6 mr-2" />
-                          <div>Thay đổi mật khẩu</div>
+                          <div>Tài khoản của bạn</div>
                         </Link>
                       </li>
                       <li>

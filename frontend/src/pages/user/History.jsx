@@ -10,8 +10,8 @@ function History() {
   const [status, setStatus] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 3;
-  const userId = localStorage.getItem("userId")
-  console.log(userId)
+  const userId = localStorage.getItem("userId");
+  console.log(userId);
   const getStatusColor = (trang_thai) => {
     switch (trang_thai) {
       case "Đã trả":
@@ -66,9 +66,7 @@ function History() {
         .catch((err) => {
           console.error("Lỗi khi hủy:", err);
           // alert("Có lỗi xảy ra khi hủy đơn.");
-          toast.error(
-            "Có lỗi xảy ra khi hủy đơn."
-          );
+          toast.error("Có lỗi xảy ra khi hủy đơn.");
         });
     }
   };
@@ -89,17 +87,13 @@ function History() {
           );
         } else {
           // alert("Không thể gia hạn.");
-          toast.error(
-            "Không thể gia hạn."
-          );
+          toast.error("Không thể gia hạn.");
         }
       })
       .catch((err) => {
         console.error("Lỗi khi gia hạn:", err);
         // alert("Có lỗi xảy ra khi gia hạn.");
-        toast.error(
-          "Có lỗi xảy ra khi gia hạn."
-        );
+        toast.error("Có lỗi xảy ra khi gia hạn.");
       });
   };
   const convertStatus = (status) => {
@@ -162,7 +156,7 @@ function History() {
                       to="/my/history"
                       className="block py-2 px-4 bg-primary text-white rounded shadow-lg"
                     >
-                      Lịch sử mua hàng
+                      Lịch sử mượn sách
                     </Link>
                   </li>
                   <li className="mb-4">
