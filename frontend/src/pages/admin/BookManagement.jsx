@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Pagination from "../../components/Pagination/Pagination";
 
-const API_BASE = "http://localhost:3000/api/books";
+const API_BASE = "http://localhost:3000/api/books/list";
 
 const BookManagement = () => {
   const [books, setBooks] = useState([]);
@@ -13,24 +12,30 @@ const BookManagement = () => {
 
   const fetchBooks = async () => {
     try {
-      const response = await axios.get(API_BASE);
+      const response = await fetch(API_BASE);
 
-      if (Array.isArray(response.data)) {
-        setBooks(response.data);
-      } else if (response.data.books && Array.isArray(response.data.books)) {
-        setBooks(response.data.books);
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || "Fetch failed");
+      }
+
+      const data = await response.json();
+
+      if (Array.isArray(data)) {
+        setBooks(data);
+      } else if (data.books && Array.isArray(data.books)) {
+        setBooks(data.books);
       } else {
-        console.warn(
-          "Warning: response.data không phải array và không có key 'books':",
-          response.data
-        );
+        console.warn("Response không hợp lệ:", data);
         setBooks([]);
       }
     } catch (error) {
       console.error("Lỗi khi lấy sách:", error);
+      alert("Lỗi khi lấy sách: " + error.message);
       setBooks([]);
     }
   };
+
 
   useEffect(() => {
     fetchBooks();
@@ -59,50 +64,47 @@ const BookManagement = () => {
   const handleSave = async () => {
     if (!editingBook) return;
 
+    const payload = {
+      title: editingBook.title,
+      author: editingBook.author,
+      genre: editingBook.genre,
+      publish_year: isNaN(editingBook.publish_year)
+        ? null
+        : parseInt(editingBook.publish_year),
+      stock: parseInt(editingBook.stock),
+      available_number: parseInt(editingBook.available_number),
+      borrowed_number: parseInt(editingBook.borrowed_number),
+      image_url: editingBook.image_url,
+      description: editingBook.description,
+    };
+
     try {
-      if (editingBook.book_id) {
-        await axios.put(`${API_BASE}/${editingBook.book_id}`, {
-          title: editingBook.title,
-          author: editingBook.author,
-          genre: editingBook.genre,
-          publish_year: isNaN(editingBook.publish_year)
-            ? null
-            : parseInt(editingBook.publish_year),
-          stock: parseInt(editingBook.stock),
-          available_number: parseInt(editingBook.available_number),
-          borrowed_number: parseInt(editingBook.borrowed_number),
-          image_url: editingBook.image_url,
-          description: editingBook.description,
-        });
-        alert("Cập nhật sách thành công.");
-      } else {
-        await axios.post(API_BASE, {
-          title: editingBook.title,
-          author: editingBook.author,
-          genre: editingBook.genre,
-          publish_year: isNaN(editingBook.publish_year)
-            ? null
-            : parseInt(editingBook.publish_year),
-          stock: parseInt(editingBook.stock),
-          available_number: parseInt(editingBook.available_number),
-          borrowed_number: parseInt(editingBook.borrowed_number),
-          image_url: editingBook.image_url,
-          description: editingBook.description,
-        });
-        alert("Tạo sách mới thành công.");
+      const response = await fetch(
+        editingBook.book_id ? `${API_BASE}/${editingBook.book_id}` : API_BASE,
+        {
+          method: editingBook.book_id ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const data = await response.json(); // Luôn gọi JSON để xem lỗi
+
+      if (!response.ok) {
+        throw new Error(data.message || "Lỗi khi lưu sách");
       }
+
+      alert(editingBook.book_id ? "Cập nhật sách thành công." : "Tạo sách mới thành công.");
 
       fetchBooks();
       setShowModal(false);
       setEditingBook(null);
     } catch (error) {
       console.error("Lỗi khi lưu sách:", error);
-      alert(
-        error.response?.data?.message ||
-          "Đã có lỗi xảy ra khi lưu thông tin sách."
-      );
+      alert("Lỗi khi lưu sách: " + error.message);
     }
   };
+
 
   const handleDelete = async (bookId) => {
     if (!bookId) return;
@@ -110,16 +112,19 @@ const BookManagement = () => {
     if (!window.confirm("Bạn có chắc muốn xóa cuốn sách này không?")) return;
 
     try {
-      await axios.delete(`${API_BASE}/${bookId}`);
+      const response = await fetch(`${API_BASE}/${bookId}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Delete failed");
+
       fetchBooks();
       setShowModal(false);
       setEditingBook(null);
     } catch (error) {
       console.error("Lỗi khi xóa sách:", error);
-      alert(
-        error.response?.data?.message ||
-          "Đã có lỗi xảy ra khi xóa cuốn sách."
-      );
+      alert(error.message || "Đã có lỗi xảy ra khi xóa cuốn sách.");
     }
   };
 

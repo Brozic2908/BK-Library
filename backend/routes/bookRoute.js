@@ -4,9 +4,9 @@ const router = express.Router();
 const bookController = require('../controllers/bookController');
 
 // Test route
-router.get("/", (req, res) => {
-  res.status(200).json({ message: "Book route active" });
-});
+//router.get("/", (req, res) => {
+//  res.status(200).json({ message: "Book route active" });
+//});
 
 // Lấy danh sách tất cả sách (có phân trang)
 router.get("/list", bookController.getBooks);
