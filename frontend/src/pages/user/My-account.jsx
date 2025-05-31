@@ -72,7 +72,7 @@ function Myaccount() {
       <div className="overflow-y-auto">
         <main className="container max-w-screen-1200 min-h-screen mx-auto px-1 lg:px-0">
           <div className="flex gap-4 pt-6">
-            <div className="w-1/4 bg-white lg:block flex flex-col text-gray-800 p-4 shadow-md rounded-lg ">
+            <div className="w-1/4 bg-white hidden lg:block flex flex-col text-gray-800 p-4 shadow-md rounded-lg  ">
               <nav>
                 <ul>
                   <li className="mb-4">

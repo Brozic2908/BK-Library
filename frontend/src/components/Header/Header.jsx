@@ -40,7 +40,9 @@ const Header = () => {
         });
     }
   }, []);
-  const avatar = "/asset/images/avatar.png";
+  // const avatar = "/asset/images/avatar.png";
+  const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=random`;
+
 
   const handleSearch = (e) => {
     e.preventDefault();
