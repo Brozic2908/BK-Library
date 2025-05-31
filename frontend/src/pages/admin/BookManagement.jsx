@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Pagination from "../../components/Pagination/Pagination";
 
-const API_BASE = "http://localhost:3000/api/books/list";
+const API_BASE = "http://localhost:3000/api/books/all";
 
 const BookManagement = () => {
   const [books, setBooks] = useState([]);

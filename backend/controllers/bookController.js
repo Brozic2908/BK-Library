@@ -173,19 +173,30 @@ exports.deleteBook = async (req, res) => {
   }
 };
 
-// [GET] /api/books/list
-exports.getAllBooks = async (req, res, next) => {
+// [GET] /api/books/all
+exports.getBooksAll = async (req, res) => {
   try {
-    const books = await Book.findAll();
-
-    res.status(200).json({
-      status: "success",
-      results: books.length,
-      data: {
-        books,
-      },
+    const books = await Book.findAll({
+      attributes: [
+        "book_id",
+        "title",
+        "author",
+        "genre",
+        "publish_year",
+        "stock",
+        "available_number",
+        "borrowed_number",
+        "image_url",
+        "description"
+      ],
     });
+
+    res.json({ books });
   } catch (error) {
-    next(error);
+    console.error("Error fetching books:", error);
+    res.status(500).json({
+      message: "Lỗi khi lấy danh sách sách.",
+      error: error.message,
+    });
   }
 };

@@ -7,6 +7,8 @@ const bookController = require('../controllers/bookController');
 //router.get("/", (req, res) => {
 //  res.status(200).json({ message: "Book route active" });
 //});
+// Lấy danh sách tất cả sách
+router.get("/all", bookController.getBooksAll);
 
 // Lấy danh sách tất cả sách (có phân trang)
 router.get("/list", bookController.getBooks);
