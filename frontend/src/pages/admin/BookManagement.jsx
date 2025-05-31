@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Pagination from "../../components/Pagination/Pagination";
 
-const API_BASE = "http://localhost:3000/api/books/all";
+const API_BASE = "http://localhost:3000/api/books";
 
 const BookManagement = () => {
   const [books, setBooks] = useState([]);
@@ -12,7 +12,7 @@ const BookManagement = () => {
 
   const fetchBooks = async () => {
     try {
-      const response = await fetch(API_BASE);
+      const response = await fetch(`${API_BASE}/all`);
 
       if (!response.ok) {
         const data = await response.json();
