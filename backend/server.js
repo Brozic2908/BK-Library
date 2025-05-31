@@ -28,7 +28,7 @@ const start = async () => {
   try {
     await initializeDatabase();
     const server = app.listen(PORT, () => {
-      console.log(`Server đang chạy trên cổng https://localhost:${PORT}\n`);
+      console.log(`Server đang chạy trên cổng http://localhost:${PORT}\n`);
     });
 
     // Xử lý lỗi Promise bị từ chối không được xử lý
