@@ -4,6 +4,7 @@ const transactionController = require("../controllers/transactionController");
 const { protect, restrictTo } = require("../middlewares/auth");
 const router = express.Router();
 
+router.get("/stats", transactionController.getLibraryStats);
 router.post("/", transactionController.createTransaction);
 router.get("/:member_id", transactionController.getAllTransactionsByUser);
 router.get("/", transactionController.getAllTransactions);
@@ -25,4 +26,5 @@ router.patch(
 );
 router.delete('/:tx_id', transactionController.deleteTransaction);
 router.patch('/:tx_id/extend', transactionController.extendDueDate);
+
 module.exports = router;

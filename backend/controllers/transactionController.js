@@ -1,13 +1,11 @@
-// TransactionController.js    # Xử lý thao tác mượn/trả sách
-const { User, Book, Transaction } = require("../models"); // Đảm bảo các model đã được import
+const { User, Book, Transaction } = require("../models");
 
 exports.createTransaction = async (req, res, next) => {
   try {
     const { member_id, book_id, schedule_date } = req.body;
     
-    // Kiểm tra ngày mượn không được bé hơn hôm nay
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00 để so sánh ngày
+    today.setHours(0, 0, 0, 0);
     const schedule = new Date(schedule_date);
     schedule.setHours(0, 0, 0, 0);
 
@@ -41,6 +39,7 @@ exports.createTransaction = async (req, res, next) => {
       member_id,
       book_id,
       schedule_date: schedule_date,
+      borrow_date: schedule_date,
       due_date: new Date(
         new Date(schedule_date).setDate(new Date(schedule_date).getDate() + 30)
       ),
@@ -73,7 +72,7 @@ exports.getAllTransactionsByUser = async (req, res, next) => {
           attributes: ["title", "author", "image_url"],
         },
       ],
-      order: [["tx_id", "DESC"]], // Sắp xếp theo mới nhất
+      order: [["tx_id", "DESC"]], 
     });
 
     if (transactions.length === 0) {
@@ -296,6 +295,25 @@ exports.extendDueDate = async (req, res, next) => {
       status: "success",
       message: "Gia hạn hạn trả thành công (+15 ngày)",
       data: { transaction },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getLibraryStats = async (req, res, next) => {
+  try {
+    const total_users = await User.count();
+    const total_books = await Book.count();
+    const total_transactions = await Transaction.count();
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        total_users,
+        total_books,
+        total_transactions,
+      },
     });
   } catch (error) {
     next(error);

@@ -77,7 +77,7 @@ const Header = () => {
             to="/my/history"
             className="text-base text-white hidden md:block hover:underline"
           >
-            Lịch sử mua hàng
+            Lịch sử muợn sách
           </Link>
         </div>
 
