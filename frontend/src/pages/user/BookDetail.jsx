@@ -71,6 +71,7 @@ export default function BookDetail() {
   }, [id]);
 
   const handleConfirmBooking = async () => {
+
     if (!borrowDate) {
       toast.error(
         " Vui lòng chọn đầy đủ ngày mượn."
@@ -82,6 +83,7 @@ export default function BookDetail() {
     //   setError(" Ngày mượn phải trước ngày trả sách.");
     //   return;
     // }
+
     setError("");
 
     try {
@@ -91,6 +93,7 @@ export default function BookDetail() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           member_id: userId, // đảm bảo bạn có biến user chứa id người dùng
+
           book_id: id,
           schedule_date: borrowDate,
         }),
@@ -102,6 +105,7 @@ export default function BookDetail() {
           createData.message || "Lỗi khi tạo giao dịch mượn sách."
         );
       }
+
 
       // const txId = createData.data.transaction.tx_id;
 
@@ -122,6 +126,7 @@ export default function BookDetail() {
       //  Thành công
       toast.success(" Đặt sách thành công!");
       // setSuccessMessage(" Đặt sách thành công!");
+
       setBook((prev) => ({
         ...prev,
         available_number: prev.available_number - 1,
