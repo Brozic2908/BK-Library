@@ -8,6 +8,18 @@ const Dashboard = () => {
   const [totalBooks, setTotalBooks] = useState(0);
   const [totalTransactions, setTotalTransactions] = useState(0);
 
+  const getCount = (res, keyName) => {
+    if (!res || !res.data) return 0;
+    const data = res.data;
+    if (Array.isArray(data)) {
+      return data.length;
+    }
+    if (data[keyName] && Array.isArray(data[keyName])) {
+      return data[keyName].length;
+    }
+    return 0;
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -17,11 +29,12 @@ const Dashboard = () => {
           axios.get(`${API_BASE}/transactions`),
         ]);
 
-        setTotalUsers(userRes.data.users?.length || 0);
-        setTotalBooks(bookRes.data.books?.length || 0);
-        setTotalTransactions(transRes.data.transactions?.length || 0);
+        setTotalUsers(getCount(userRes, "users"));
+        setTotalBooks(getCount(bookRes, "books"));
+        setTotalTransactions(getCount(transRes, "transactions"));
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu Dashboard:", error);
+
       }
     };
 
@@ -30,7 +43,6 @@ const Dashboard = () => {
 
   return (
     <div className="p-6 space-y-6">
-      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-green-500 text-white p-6 rounded-2xl shadow-lg">
           <h2 className="text-lg font-semibold">Tổng người dùng:</h2>
