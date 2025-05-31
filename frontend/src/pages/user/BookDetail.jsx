@@ -21,7 +21,7 @@ export default function BookDetail() {
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    // Validate id before fetching
+    // Kiểm tra ID hợp lệ
     if (!id || isNaN(Number(id))) {
       setError("ID sách không hợp lệ.");
       setBook(null);
@@ -32,7 +32,7 @@ export default function BookDetail() {
       console.log(book.title);
       console.log(book.author);
     }
-    // Fetch book detail by id
+    // API lấy chi tiết sách theo ID
     const fetchBook = async () => {
       try {
         const res = await fetch(`/api/books/${id}`);
@@ -47,7 +47,7 @@ export default function BookDetail() {
       }
     };
 
-    // Fetch random books excluding current
+    // API lấy 4 sách ngẫu nhiên, trừ sách hiện tại
     const fetchRandomBooks = async () => {
       try {
         const res = await fetch(`/api/books/random?exclude=${id}`);
@@ -62,7 +62,6 @@ export default function BookDetail() {
 
     fetchBook();
     fetchRandomBooks();
-    // Reset messages & form when id changes
     setShowBookingForm(false);
     setBorrowDate("");
     setReturnDate("");
@@ -89,8 +88,7 @@ export default function BookDetail() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          member_id: userId, // đảm bảo bạn có biến user chứa id người dùng
-
+          member_id: userId, 
           book_id: id,
           schedule_date: borrowDate,
         }),
@@ -185,7 +183,7 @@ export default function BookDetail() {
         <div className="flex flex-col md:flex-row items-start gap-8 md:gap-10">
           <div className="w-full md:w-1/3 flex-shrink-0">
             <img
-              src={book.image_url || book.cover} // Tùy dữ liệu backend
+              src={book.image_url || book.cover}
               alt={book.title}
               className="rounded-lg shadow-lg w-full h-auto object-cover"
             />
@@ -264,10 +262,9 @@ export default function BookDetail() {
           {randomBooks.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
               {randomBooks.map((item) => {
-                // Chuẩn hóa dữ liệu ảnh
                 const imageSrc =
                   item.image_url || item.cover || item.image || "";
-                const bookId = item.book_id || item.id; // ưu tiên book_id nếu có
+                const bookId = item.book_id || item.id; 
 
                 return (
                   <div
