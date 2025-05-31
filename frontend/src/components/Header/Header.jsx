@@ -9,10 +9,11 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 import { userService } from "../../services";
+import { Flashlight } from "lucide-react";
 
 const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -38,6 +39,7 @@ const Header = () => {
         .catch((err) => {
           console.error("Error fetching user data:", err);
         });
+      setIsLoggedIn(true)
     }
   }, []);
   // const avatar = "/asset/images/avatar.png";
