@@ -17,6 +17,9 @@ router.get("/random", bookController.getRandomBooks);
 // Lấy chi tiết 1 sách theo ID
 router.get("/:id", bookController.getBookById);
 
+// Update số lượng sách theo ID
+router.patch("/:id/update-quantity", bookController.updateBookQuantity);
+
 // Tạo sách mới (admin)
 router.post("/", bookController.createBook);
 

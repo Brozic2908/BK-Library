@@ -92,6 +92,32 @@ exports.getBookById = async (req, res) => {
   }
 };
 
+// [PATCH] /api/books/:id/update-quantity - Cập nhật số lượng sách
+exports.updateBookQuantity = async (req, res) => {
+  try {
+    const bookId = req.params.id;
+    const { available_number } = req.body;
+
+    if (available_number == null || isNaN(available_number) || available_number < 0) {
+      return res.status(400).json({ message: "Số lượng sách không hợp lệ" });
+    }
+
+    const [updated] = await Book.update(
+      { available_number },
+      { where: { book_id: bookId } }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ message: "Không tìm thấy sách." });
+    }
+
+    const updatedBook = await Book.findByPk(bookId);
+    res.json({ message: "Cập nhật số lượng sách thành công", book: updatedBook });
+  } catch (error) {
+    console.error("Error updating book quantity:", error);
+    res.status(500).json({ message: "Lỗi khi cập nhật số lượng sách.", error: error.message });
+  }
+};
 
 // ---------------------- QUẢN TRỊ VIÊN ----------------------
 
