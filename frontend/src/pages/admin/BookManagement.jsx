@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Pagination from "../../components/Pagination/Pagination";
 
-const API_BASE = "http://localhost:3000/api/books"; 
+const API_BASE = "http://localhost:3000/api/books";
 
 const BookManagement = () => {
   const [books, setBooks] = useState([]);
@@ -10,16 +10,25 @@ const BookManagement = () => {
   const [showModal, setShowModal] = useState(false);
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
-  
-  // Lấy dữ liệu sách từ API
+
   const fetchBooks = async () => {
     try {
       const response = await axios.get(API_BASE);
 
-      setBooks(response.data || []);
+      if (Array.isArray(response.data)) {
+        setBooks(response.data);
+      } else if (response.data.books && Array.isArray(response.data.books)) {
+        setBooks(response.data.books);
+      } else {
+        console.warn(
+          "Warning: response.data không phải array và không có key 'books':",
+          response.data
+        );
+        setBooks([]);
+      }
     } catch (error) {
       console.error("Lỗi khi lấy sách:", error);
-      alert("Không thể tải danh sách sách. Vui lòng kiểm tra backend.");
+      setBooks([]);
     }
   };
 
@@ -42,28 +51,26 @@ const BookManagement = () => {
     setShowModal(true);
   };
 
-  const handleEdit = async (book) => {
-    try {
-      const resDetail = await axios.get(`${API_BASE}/${book.book_id}`);
-      setEditingBook(resDetail.data);
-      setShowModal(true);
-    } catch (error) {
-      console.error("Lỗi khi tải chi tiết sách:", error);
-      alert("Không thể tải thông tin cuốn sách này.");
-    }
+  const handleEdit = (book) => {
+    setEditingBook({ ...book });
+    setShowModal(true);
   };
 
   const handleSave = async () => {
+    if (!editingBook) return;
+
     try {
       if (editingBook.book_id) {
         await axios.put(`${API_BASE}/${editingBook.book_id}`, {
           title: editingBook.title,
           author: editingBook.author,
           genre: editingBook.genre,
-          publish_year: editingBook.publish_year,
-          stock: editingBook.stock,
-          available_number: editingBook.available_number,
-          borrowed_number: editingBook.borrowed_number,
+          publish_year: isNaN(editingBook.publish_year)
+            ? null
+            : parseInt(editingBook.publish_year),
+          stock: parseInt(editingBook.stock),
+          available_number: parseInt(editingBook.available_number),
+          borrowed_number: parseInt(editingBook.borrowed_number),
           image_url: editingBook.image_url,
           description: editingBook.description,
         });
@@ -73,15 +80,18 @@ const BookManagement = () => {
           title: editingBook.title,
           author: editingBook.author,
           genre: editingBook.genre,
-          publish_year: editingBook.publish_year,
-          stock: editingBook.stock,
-          available_number: editingBook.available_number,
-          borrowed_number: editingBook.borrowed_number,
+          publish_year: isNaN(editingBook.publish_year)
+            ? null
+            : parseInt(editingBook.publish_year),
+          stock: parseInt(editingBook.stock),
+          available_number: parseInt(editingBook.available_number),
+          borrowed_number: parseInt(editingBook.borrowed_number),
           image_url: editingBook.image_url,
           description: editingBook.description,
         });
         alert("Tạo sách mới thành công.");
       }
+
       fetchBooks();
       setShowModal(false);
       setEditingBook(null);
@@ -94,11 +104,13 @@ const BookManagement = () => {
     }
   };
 
-  const handleDelete = async (book_id) => {
+  const handleDelete = async (bookId) => {
+    if (!bookId) return;
+
     if (!window.confirm("Bạn có chắc muốn xóa cuốn sách này không?")) return;
+
     try {
-      await axios.delete(`${API_BASE}/${book_id}`);
-      alert("Đã xóa sách thành công.");
+      await axios.delete(`${API_BASE}/${bookId}`);
       fetchBooks();
       setShowModal(false);
       setEditingBook(null);
@@ -118,7 +130,7 @@ const BookManagement = () => {
   return (
     <div className="p-4 sm:p-6">
       <div className="overflow-x-auto bg-white rounded-2xl shadow-lg p-4 sm:p-6">
-        {/* Header + nút Thêm */}
+        {/* Header + nút Thêm sách */}
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-xl font-bold">Quản lý sách</h1>
           <button
@@ -139,7 +151,7 @@ const BookManagement = () => {
               <th className="p-3">Thể loại</th>
               <th className="p-3">Năm phát hành</th>
               <th className="p-3">Số lượng</th>
-              <th className="p-3">Sẵn có</th>
+              <th className="p-3">Khả dụng</th>
               <th className="p-3">Hành động</th>
             </tr>
           </thead>
@@ -169,7 +181,8 @@ const BookManagement = () => {
                 </td>
               </tr>
             ))}
-            {currentItems.length === 0 && (
+
+            {books.length === 0 && (
               <tr>
                 <td colSpan={8} className="p-3 text-center">
                   Không có sách nào để hiển thị.
@@ -179,15 +192,17 @@ const BookManagement = () => {
           </tbody>
         </table>
 
-        {/* Pagination Component*/}
-        <Pagination
-          totalItems={books.length}
-          itemsPerPage={itemsPerPage}
-          currentPage={currentPage}
-          onPageChange={setCurrentPage}
-        />
+        {/* Pagination */}
+        <div className="mt-4 flex justify-center">
+          <Pagination
+            totalItems={books.length}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+          />
+        </div>
 
-        {/* === Modal Thêm / Chỉnh sửa sách === */}
+        {/* Modal thêm / chỉnh sửa sách */}
         {showModal && editingBook && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50">
             <div className="bg-white p-6 rounded-2xl w-[90%] max-w-xl space-y-4 shadow-lg overflow-y-auto max-h-[90vh]">
@@ -196,10 +211,10 @@ const BookManagement = () => {
               </h2>
 
               <div className="grid grid-cols-1 gap-4">
-                {/* Genre */}
+                {/* Thay “category” thành “genre” cho khớp backend */}
                 <input
                   type="text"
-                  value={editingBook.genre}
+                  value={editingBook.genre || ""}
                   onChange={(e) =>
                     setEditingBook({ ...editingBook, genre: e.target.value })
                   }
@@ -210,7 +225,7 @@ const BookManagement = () => {
                 {/* Title */}
                 <input
                   type="text"
-                  value={editingBook.title}
+                  value={editingBook.title || ""}
                   onChange={(e) =>
                     setEditingBook({ ...editingBook, title: e.target.value })
                   }
@@ -221,7 +236,7 @@ const BookManagement = () => {
                 {/* Author */}
                 <input
                   type="text"
-                  value={editingBook.author}
+                  value={editingBook.author || ""}
                   onChange={(e) =>
                     setEditingBook({ ...editingBook, author: e.target.value })
                   }
@@ -232,11 +247,11 @@ const BookManagement = () => {
                 {/* Năm phát hành */}
                 <input
                   type="number"
-                  value={editingBook.publish_year}
+                  value={editingBook.publish_year || ""}
                   onChange={(e) =>
                     setEditingBook({
                       ...editingBook,
-                      publish_year: parseInt(e.target.value),
+                      publish_year: parseInt(e.target.value) || "",
                     })
                   }
                   className="p-2 border rounded-lg"
@@ -246,25 +261,25 @@ const BookManagement = () => {
                 {/* Stock */}
                 <input
                   type="number"
-                  value={editingBook.stock}
+                  value={editingBook.stock || 0}
                   onChange={(e) =>
                     setEditingBook({
                       ...editingBook,
-                      stock: parseInt(e.target.value),
+                      stock: parseInt(e.target.value) || 0,
                     })
                   }
                   className="p-2 border rounded-lg"
-                  placeholder="Số lượng (stock)"
+                  placeholder="Số lượng"
                 />
 
                 {/* Available */}
                 <input
                   type="number"
-                  value={editingBook.available_number}
+                  value={editingBook.available_number || 0}
                   onChange={(e) =>
                     setEditingBook({
                       ...editingBook,
-                      available_number: parseInt(e.target.value),
+                      available_number: parseInt(e.target.value) || 0,
                     })
                   }
                   className="p-2 border rounded-lg"
@@ -288,7 +303,7 @@ const BookManagement = () => {
                 {/* Image URL */}
                 <input
                   type="text"
-                  value={editingBook.image_url}
+                  value={editingBook.image_url || ""}
                   onChange={(e) =>
                     setEditingBook({
                       ...editingBook,
@@ -301,7 +316,7 @@ const BookManagement = () => {
 
                 {/* Description */}
                 <textarea
-                  value={editingBook.description}
+                  value={editingBook.description || ""}
                   onChange={(e) =>
                     setEditingBook({
                       ...editingBook,
@@ -310,7 +325,7 @@ const BookManagement = () => {
                   }
                   className="p-2 border rounded-lg"
                   placeholder="Mô tả"
-                  rows={4}
+                  rows={5}
                 />
               </div>
 
