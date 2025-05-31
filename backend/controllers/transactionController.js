@@ -20,6 +20,9 @@ exports.createTransaction = async (req, res, next) => {
         message: "Không tìm thấy sách với ID này",
       });
     }
+    book.available_number -= 1;
+    book.borrowed_number += 1;
+    await book.save();
 
     const transaction = await Transaction.create({
       member_id,
@@ -150,9 +153,6 @@ exports.updateTransactionStatus = async (req, res, next) => {
             message: "Không còn sách để mượn",
           });
         }
-
-        book.available_number -= 1;
-        book.borrowed_number += 1;
       } else if (status === 'Returned') {
         if (transaction.status !== 'Borrowing') {
           return res.status(400).json({
