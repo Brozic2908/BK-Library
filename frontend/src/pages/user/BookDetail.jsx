@@ -69,14 +69,31 @@ export default function BookDetail() {
   }, [id]);
 
   const handleConfirmBooking = async () => {
+    const userId = localStorage.getItem("userId");
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const selectedBorrowDate = new Date(borrowDate);
+    selectedBorrowDate.setHours(0, 0, 0, 0);
+
+    const selectedReturnDate = new Date(returnDate);
+    selectedReturnDate.setHours(0, 0, 0, 0);
+
     if (!borrowDate || !returnDate) {
       setError("⚠️ Vui lòng chọn đầy đủ ngày mượn và ngày trả sách.");
       return;
     }
-    if (new Date(borrowDate) >= new Date(returnDate)) {
+
+    if (selectedBorrowDate < today) {
+      setError("⚠️ Ngày mượn không được nhỏ hơn ngày hiện tại.");
+      return;
+    }
+
+    if (selectedBorrowDate >= selectedReturnDate) {
       setError("⚠️ Ngày mượn phải trước ngày trả sách.");
       return;
     }
+
     setError("");
 
     try {
@@ -85,7 +102,7 @@ export default function BookDetail() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          member_id: user.id, // đảm bảo bạn có biến user chứa id người dùng
+          member_id: Number(userId),
           book_id: id,
           schedule_date: borrowDate,
         }),
@@ -101,7 +118,7 @@ export default function BookDetail() {
       const txId = createData.data.transaction.tx_id;
 
       // 2. Cập nhật trạng thái sang 'Borrowing'
-      const updateRes = await fetch(`/api/transactions/${txId}/status`, {
+      const updateRes = await fetch(`/api/transactions/${txId}/update`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "Borrowing" }),
@@ -111,6 +128,20 @@ export default function BookDetail() {
       if (!updateRes.ok) {
         throw new Error(
           updateData.message || "Lỗi khi cập nhật trạng thái mượn."
+        );
+      }
+
+      // 3. Cập nhật số lượng sách available_number - 1
+      const newQuantity = book.available_number - 1;
+      const updateBookRes = await fetch(`/api/books/${id}/update-quantity`, {
+        method: "PATCH", 
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ available_number: newQuantity }),
+      });
+      const updateBookData = await updateBookRes.json();
+      if (!updateBookRes.ok) {
+        throw new Error(
+          updateBookData.message || "Lỗi khi cập nhật số lượng sách."
         );
       }
 
