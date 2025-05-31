@@ -8,41 +8,27 @@ const Dashboard = () => {
   const [totalBooks, setTotalBooks] = useState(0);
   const [totalTransactions, setTotalTransactions] = useState(0);
 
-  const getCount = (res, keyName) => {
-    if (!res || !res.data) return 0;
-    const data = res.data;
-    if (Array.isArray(data)) {
-      return data.length;
-    }
-    if (data[keyName] && Array.isArray(data[keyName])) {
-      return data[keyName].length;
-    }
-    return 0;
-  };
-
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const [userRes, bookRes, transRes] = await Promise.all([
-          axios.get(`${API_BASE}/users`),
-          axios.get(`${API_BASE}/books`),
-          axios.get(`${API_BASE}/transactions`),
-        ]);
+    try {
+      const res = await axios.get(`${API_BASE}/transactions/stats`);
+      const stats = res.data.data;
 
-        setTotalUsers(getCount(userRes, "users"));
-        setTotalBooks(getCount(bookRes, "books"));
-        setTotalTransactions(getCount(transRes, "transactions"));
-      } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu Dashboard:", error);
+      setTotalUsers(stats.total_users || 0);
+      setTotalBooks(stats.total_books || 0);
+      setTotalTransactions(stats.total_transactions || 0);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu Dashboard:", error);
+    }
+  };
 
-      }
-    };
 
     fetchData();
   }, []);
 
   return (
     <div className="p-6 space-y-6">
+      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-green-500 text-white p-6 rounded-2xl shadow-lg">
           <h2 className="text-lg font-semibold">Tổng người dùng:</h2>

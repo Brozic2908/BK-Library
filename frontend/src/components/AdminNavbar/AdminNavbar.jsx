@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigation, useNavigate,} from "react-router-dom";
 import { Home, Users, BookOpen, RepeatIcon, LogOut, X } from "lucide-react";
 
 export default function AdminNavbar({
@@ -7,6 +7,7 @@ export default function AdminNavbar({
   setIsSidebarOpen,
   onLogout,
 }) {
+  const navigate = useNavigate();
   const location = useLocation();
 
   const menuItems = [
@@ -27,6 +28,13 @@ export default function AdminNavbar({
       title: "Quản lý giao dịch",
     },
   ];
+  const handleLogout = () => {
+    // Add your logout logic here
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("role");
+    navigate("/login");
+  };
 
   return (
     <div
@@ -71,10 +79,7 @@ export default function AdminNavbar({
       <div className="absolute bottom-0 w-full p-4 border-t border-gray-800">
         <button
           onClick={() => {
-            localStorage.removeItem("token");
-            localStorage.removeItem("role");
-            localStorage.removeItem("userId");
-            onLogout;
+            handleLogout();
           }}
           className="flex items-center w-full px-4 py-3 text-gray-300 transition-colors rounded-md hover:bg-gray-800 hover:text-white"
         >

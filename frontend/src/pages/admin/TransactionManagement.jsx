@@ -21,7 +21,6 @@ const TransactionManagement = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data.status === "success") {
-          // Chuyển đổi dữ liệu từ API thành định dạng FE đang cần
           const transformed = data.data.transactions.map((t) => ({
             id: t.tx_id,
             user: t.member?.name || "Không rõ",
@@ -32,6 +31,7 @@ const TransactionManagement = () => {
             return_date: t.return_date,
             status: t.status,
           }));
+          // transformed.reverse();
           setTransactions(transformed);
         }
       })
@@ -45,12 +45,6 @@ const TransactionManagement = () => {
     setShowModal(true);
   };
 
-  // const handleSave = () => {
-  //   setTransactions((prev) =>
-  //     prev.map((t) => (t.id === editingTransaction.id ? editingTransaction : t))
-  //   );
-  //   setShowModal(false);
-  // };
   const handleSave = async () => {
     const original = transactions.find((t) => t.id === editingTransaction.id);
     const updates = [];
