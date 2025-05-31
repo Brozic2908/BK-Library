@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Pagination from "../../components/Pagination/Pagination";
+import { toast } from "react-toastify";
 
 const API_BASE = "http://localhost:3000/api/books";
 
@@ -31,7 +32,8 @@ const BookManagement = () => {
       }
     } catch (error) {
       console.error("Lỗi khi lấy sách:", error);
-      alert("Lỗi khi lấy sách: " + error.message);
+      toast.error("Lỗi khi lấy sách: " + error.message);
+      // alert("Lỗi khi lấy sách: " + error.message);
       setBooks([]);
     }
   };
@@ -88,20 +90,21 @@ const BookManagement = () => {
         }
       );
 
-      const data = await response.json(); // Luôn gọi JSON để xem lỗi
-
+      const data = await response.json(); 
       if (!response.ok) {
         throw new Error(data.message || "Lỗi khi lưu sách");
       }
 
-      alert(editingBook.book_id ? "Cập nhật sách thành công." : "Tạo sách mới thành công.");
+      toast.success(editingBook.book_id ? "Cập nhật sách thành công." : "Tạo sách mới thành công.");
+      // alert(editingBook.book_id ? "Cập nhật sách thành công." : "Tạo sách mới thành công.");
 
       fetchBooks();
       setShowModal(false);
       setEditingBook(null);
     } catch (error) {
       console.error("Lỗi khi lưu sách:", error);
-      alert("Lỗi khi lưu sách: " + error.message);
+      toast.error("Lỗi khi lưu sách: " + error.message);
+      // alert("Lỗi khi lưu sách: " + error.message);
     }
   };
 
@@ -124,7 +127,8 @@ const BookManagement = () => {
       setEditingBook(null);
     } catch (error) {
       console.error("Lỗi khi xóa sách:", error);
-      alert(error.message || "Đã có lỗi xảy ra khi xóa cuốn sách.");
+      toast.error(error.message || "Đã có lỗi xảy ra khi xóa cuốn sách.");
+      // alert(error.message || "Đã có lỗi xảy ra khi xóa cuốn sách.");
     }
   };
 
