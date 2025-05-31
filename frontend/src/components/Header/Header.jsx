@@ -9,7 +9,6 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 import { userService } from "../../services";
-import { Flashlight } from "lucide-react";
 
 const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
