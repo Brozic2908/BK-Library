@@ -13,12 +13,12 @@ export default function BookDetail() {
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [randomBooks, setRandomBooks] = useState([]);
-
+  const [isBooked, setIsBooked] = useState(false);
   const bookingFormRef = useRef(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const userId = localStorage.getItem("userId")
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     // Validate id before fetching
@@ -71,11 +71,8 @@ export default function BookDetail() {
   }, [id]);
 
   const handleConfirmBooking = async () => {
-
     if (!borrowDate) {
-      toast.error(
-        " Vui lòng chọn đầy đủ ngày mượn."
-      );
+      toast.error(" Vui lòng chọn đầy đủ ngày mượn.");
       // setError(" Vui lòng chọn đầy đủ ngày mượn và ngày trả sách.");
       return;
     }
@@ -106,7 +103,6 @@ export default function BookDetail() {
         );
       }
 
-
       // const txId = createData.data.transaction.tx_id;
 
       // // 2. Cập nhật trạng thái sang 'Borrowing'
@@ -125,6 +121,7 @@ export default function BookDetail() {
 
       //  Thành công
       toast.success(" Đặt sách thành công!");
+      setIsBooked(true);
       // setSuccessMessage(" Đặt sách thành công!");
 
       setBook((prev) => ({
@@ -350,7 +347,12 @@ export default function BookDetail() {
 
           <button
             onClick={handleConfirmBooking}
-            className="bg-primary text-white w-full py-2 rounded hover:bg-red-700 transition"
+            disabled={isBooked}
+            className={`${
+              isBooked
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-primary hover:bg-red-700"
+            } text-white w-full py-2 rounded transition`}
           >
             Xác nhận đặt mượn
           </button>
