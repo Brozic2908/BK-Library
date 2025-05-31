@@ -1,15 +1,28 @@
 // layouts/AdminLayouts.jsx
 import { useState, useEffect } from "react";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import {
+  Outlet,
+  useNavigate,
+  useLocation,
+  useNavigation,
+} from "react-router-dom";
 import AdminNavbar from "../components/AdminNavbar/AdminNavbar";
 import AdminHeader from "../components/AdminHeader/AdminHeader";
-import { Menu, X } from "lucide-react";
 
 const AdminLayouts = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    console.log("Current token:", token);
+
+    if (!token) {
+      navigate("/login", { replace: true });
+    }
+  }, [navigate, location]);
   const menuItems = [
     { path: "/admin", title: "Trang chủ" },
     { path: "/admin/users", title: "Quản lý người dùng" },

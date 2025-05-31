@@ -4,6 +4,19 @@ const { User, Book, Transaction } = require("../models"); // Đảm bảo các m
 exports.createTransaction = async (req, res, next) => {
   try {
     const { member_id, book_id, schedule_date } = req.body;
+    
+    // Kiểm tra ngày mượn không được bé hơn hôm nay
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00 để so sánh ngày
+    const schedule = new Date(schedule_date);
+    schedule.setHours(0, 0, 0, 0);
+
+    if (schedule < today) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Ngày mượn không được nhỏ hơn ngày hôm nay",
+      });
+    }
 
     const user = await User.findByPk(member_id);
     if (!user) {
@@ -28,8 +41,10 @@ exports.createTransaction = async (req, res, next) => {
       member_id,
       book_id,
       schedule_date: schedule_date,
-      due_date: new Date(new Date(schedule_date).setDate(new Date(schedule_date).getDate() + 30)),
-      status: 'Pending'
+      due_date: new Date(
+        new Date(schedule_date).setDate(new Date(schedule_date).getDate() + 30)
+      ),
+      status: "Pending",
     });
 
     res.status(200).json({
@@ -43,7 +58,6 @@ exports.createTransaction = async (req, res, next) => {
   }
 };
 
-
 exports.getAllTransactionsByUser = async (req, res, next) => {
   try {
     const { member_id } = req.params;
@@ -55,11 +69,11 @@ exports.getAllTransactionsByUser = async (req, res, next) => {
       include: [
         {
           model: Book,
-          as: 'book',
-          attributes: ['title', 'author', 'image_url'],
-        }
+          as: "book",
+          attributes: ["title", "author", "image_url"],
+        },
       ],
-      order: [['tx_id', 'DESC']]  // Sắp xếp theo mới nhất
+      order: [["tx_id", "DESC"]], // Sắp xếp theo mới nhất
     });
 
     if (transactions.length === 0) {
@@ -87,13 +101,13 @@ exports.getAllTransactions = async (req, res, next) => {
       include: [
         {
           model: User,
-          as: "member", 
-          attributes: ['name'],
+          as: "member",
+          attributes: ["name"],
         },
         {
           model: Book,
-          as: 'book',
-          attributes: ['title'],
+          as: "book",
+          attributes: ["title"],
         },
       ],
     });
@@ -122,14 +136,14 @@ exports.updateTransactionStatus = async (req, res, next) => {
     const { status } = req.body;
     const { tx_id } = req.params;
 
-    if (!['Pending', 'Borrowing', 'Returned', 'Cancel'].includes(status)) {
+    if (!["Pending", "Borrowing", "Returned", "Cancel"].includes(status)) {
       return res.status(400).json({
         status: "fail",
         message: "Trạng thái không hợp lệ",
       });
     }
 
-  const transaction = await Transaction.findByPk(tx_id);
+    const transaction = await Transaction.findByPk(tx_id);
     if (!transaction) {
       return res.status(404).json({
         status: "fail",
@@ -137,7 +151,7 @@ exports.updateTransactionStatus = async (req, res, next) => {
       });
     }
 
-    if (status === 'Borrowing' || status === 'Returned') {
+    if (status === "Borrowing" || status === "Returned") {
       const book = await Book.findByPk(transaction.book_id);
       if (!book) {
         return res.status(404).json({
@@ -146,24 +160,24 @@ exports.updateTransactionStatus = async (req, res, next) => {
         });
       }
 
-      if (status === 'Borrowing') {
+      if (status === "Borrowing") {
         if (book.available_number <= 0) {
           return res.status(400).json({
             status: "fail",
             message: "Không còn sách để mượn",
           });
         }
-      } else if (status === 'Returned') {
-        if (transaction.status !== 'Borrowing') {
+      } else if (status === "Returned") {
+        if (transaction.status !== "Borrowing") {
           return res.status(400).json({
             status: "fail",
             message: "Chỉ có thể trả sách sau khi đã mượn",
           });
         }
       }
-        book.available_number += 1;
-        book.borrowed_number = Math.max(0, book.borrowed_number - 1);
-        transaction.return_date = new Date(); 
+      book.available_number += 1;
+      book.borrowed_number = Math.max(0, book.borrowed_number - 1);
+      transaction.return_date = new Date();
 
       await book.save();
     }
@@ -175,7 +189,6 @@ exports.updateTransactionStatus = async (req, res, next) => {
       status: "success",
       data: { transaction },
     });
-
   } catch (error) {
     next(error);
   }
@@ -223,13 +236,24 @@ exports.deleteTransaction = async (req, res, next) => {
       });
     }
 
-    if (['Borrowing', 'Returned'].includes(transaction.status)) {
+    if (["Borrowing", "Returned"].includes(transaction.status)) {
       return res.status(400).json({
         status: "fail",
         message: "Không thể xoá giao dịch đã mượn hoặc đã trả",
       });
     }
 
+    const book = await Book.findByPk(transaction.book_id);
+    if (!book) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Không tìm thấy sách liên quan đến giao dịch",
+      });
+    }
+    book.available_number += 1;
+    book.borrowed_number = Math.max(0, book.borrowed_number - 1);
+
+    await book.save();
     await transaction.destroy();
 
     res.status(200).json({
@@ -253,7 +277,7 @@ exports.extendDueDate = async (req, res, next) => {
       });
     }
 
-    if (transaction.status !== 'Borrowing') {
+    if (transaction.status !== "Borrowing") {
       return res.status(400).json({
         status: "fail",
         message: "Chỉ có thể gia hạn với sách đang được mượn",
@@ -261,7 +285,9 @@ exports.extendDueDate = async (req, res, next) => {
     }
 
     const oldDueDate = new Date(transaction.due_date);
-    const extendedDate = new Date(oldDueDate.setDate(oldDueDate.getDate() + 15));
+    const extendedDate = new Date(
+      oldDueDate.setDate(oldDueDate.getDate() + 15)
+    );
     transaction.due_date = extendedDate;
 
     await transaction.save();
