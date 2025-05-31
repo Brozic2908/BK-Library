@@ -36,7 +36,7 @@ const Dashboard = () => {
         </div>
 
         <div className="bg-purple-600 text-white p-6 rounded-2xl shadow-lg">
-          <h2 className="text-lg font-semibold">Số sản phẩm:</h2>
+          <h2 className="text-lg font-semibold">Số sách:</h2>
           <p className="text-3xl font-bold">{totalBooks}</p>
         </div>
 
