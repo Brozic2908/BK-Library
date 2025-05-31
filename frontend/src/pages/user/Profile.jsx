@@ -58,7 +58,7 @@ function Profile() {
                       to="/my/history"
                       className="block py-2 px-4 text-gray-800 rounded hover:bg-gray-300 hover:shadow-lg hover:-translate-y-1 transform transition-all duration-200"
                     >
-                      Lịch sử mua hàng
+                      Lịch sử mượn sách
                     </Link>
                   </li>
                   <li className="mb-4">
