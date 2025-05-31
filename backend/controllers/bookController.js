@@ -24,7 +24,7 @@ exports.getBooks = async (req, res) => {
       where: whereCondition,
       offset: startIndex,
       limit: limit,
-      attributes: ["book_id", "title", "image_url"],
+      attributes: ["book_id", "title", "author", "genre", "publish_year", "stock", "available_number", "borrowed_number", "image_url", "description"],
     });
 
     const total = await Book.count({ where: whereCondition });
@@ -170,5 +170,33 @@ exports.deleteBook = async (req, res) => {
     res
       .status(500)
       .json({ message: "Lỗi khi xóa sách.", error: error.message });
+  }
+};
+
+// [GET] /api/books/all
+exports.getBooksAll = async (req, res) => {
+  try {
+    const books = await Book.findAll({
+      attributes: [
+        "book_id",
+        "title",
+        "author",
+        "genre",
+        "publish_year",
+        "stock",
+        "available_number",
+        "borrowed_number",
+        "image_url",
+        "description"
+      ],
+    });
+
+    res.json({ books });
+  } catch (error) {
+    console.error("Error fetching books:", error);
+    res.status(500).json({
+      message: "Lỗi khi lấy danh sách sách.",
+      error: error.message,
+    });
   }
 };
