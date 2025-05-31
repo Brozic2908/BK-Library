@@ -230,6 +230,17 @@ exports.deleteTransaction = async (req, res, next) => {
       });
     }
 
+    const book = await Book.findByPk(transaction.book_id);
+    if (!book) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Không tìm thấy sách liên quan đến giao dịch",
+      });
+    }
+    book.available_number += 1;
+    book.borrowed_number = Math.max(0, book.borrowed_number - 1);
+
+    await book.save();
     await transaction.destroy();
 
     res.status(200).json({
