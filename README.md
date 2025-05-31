@@ -1,100 +1,141 @@
-# BK Library Project
+# 📚 BK Library - Hệ thống quản lý thư viện trực tuyến
 
-BK Library là một ứng dụng web thư viện sách được xây dựng bằng ReactJS, Vite và Tailwind CSS. Dự án này mô phỏng một trang web thư viện sách, cho phép người dùng duyệt qua các đầu sách, xem chi tiết sách và lọc sách theo danh mục.
+BK Library là một hệ thống web được phát triển nhằm hỗ trợ việc quản lý sách, độc giả và hoạt động mượn/trả sách tại các thư viện trường học. Dự án bao gồm hai phần chính: frontend cho người dùng và backend cho quản trị viên, giúp tự động hóa quy trình nghiệp vụ thư viện một cách hiệu quả.
 
-## Tính năng
+---
 
-- 📚 Hiển thị danh sách sách mới nhất
-- 🔍 Tìm kiếm sách
-- 📑 Xem chi tiết sách
-- 🗂️ Lọc sách theo danh mục
-- 📱 Giao diện responsive
+## 🚀 Tính năng nổi bật
 
-## Công nghệ sử dụng
+### Người dùng (User)
 
-- [ReactJS](https://reactjs.org/) - Thư viện UI
-- [Vite](https://vitejs.dev/) - Build tool
-- [React Router](https://reactrouter.com/) - Điều hướng trong ứng dụng
-- [Tailwind CSS](https://tailwindcss.com/) - Framework CSS
-- [React Icons](https://react-icons.github.io/react-icons/) - Thư viện icon
-- [Font awesome](https://fontawesome.com/search?q=gaming&o=r&ic=free) - Thư viện icon
+- 📖 Duyệt và tìm kiếm sách theo tên hoặc danh mục
+- 📑 Xem thông tin chi tiết của từng cuốn sách
+- 🛒 Đăng nhập và thực hiện mượn sách
 
-## Cài đặt
+### Quản trị viên (Admin)
 
-### Yêu cầu
+- 👤 Quản lý người dùng
+- 📚 Quản lý danh mục và thông tin sách
+- 📆 Theo dõi lịch sử mượn/trả sách
 
-- Node.js (phiên bản 14.x trở lên)
-- npm (phiên bản 6.x trở lên)
+---
 
-### Các bước cài đặt
+## 🧠 Kiến trúc hệ thống
 
-1. Clone repository về máy:
+### Backend
+
+- **Node.js + Express** phục vụ các API RESTful
+- Mô hình **MVC** (Model - View - Controller) tách biệt rõ ràng giữa logic, dữ liệu và API
+- Bảo mật:
+  - Băm mật khẩu bằng **bcrypt**
+  - Xác thực người dùng bằng **JWT**
+- Kết nối cơ sở dữ liệu SQL thông qua **ORM**
+
+### Frontend
+
+- **ReactJS + Vite** cho tốc độ build nhanh và trải nghiệm mượt mà
+- **Tailwind CSS** giúp thiết kế giao diện responsive nhanh chóng
+- **React Router** để điều hướng nhiều trang
+- Triển khai giao diện quản lý (Admin UI) và người dùng (User UI) độc lập nhưng đồng bộ
+
+---
+
+## 🧰 Công nghệ sử dụng
+
+| Layer         | Công nghệ chính                           |
+| ------------- | ----------------------------------------- |
+| Frontend      | ReactJS, Vite, Tailwind CSS, React Router |
+| Backend       | Node.js, Express, JWT, bcrypt, ORM, CORS  |
+| Cơ sở dữ liệu | MySQL (qua file SQLInput.sql)             |
+| Icons         | React Icons, Font Awesome                 |
+
+---
+
+## 🗂️ Cấu trúc dự án
+
+```bash
+BK_Library/
+├── backend/
+│ ├── config/ # Thiết lập cơ sở dữ liệu
+│ ├── controllers/ # Xử lý logic cho API
+│ ├── middlewares/ # Xác thực JWT, xử lý lỗi
+│ ├── models/ # ORM models
+│ ├── routes/ # Định nghĩa API endpoints
+│ ├── server.js # Khởi chạy máy chủ
+│ └── app.js # Cấu hình Express app
+│ └── db.sql # Tạo database
+│ └── SQLInput.sql # Input database
+├── frontend/
+│ ├── public/
+│ ├── src/
+│ │ ├── components/ # Các component giao diện
+│ │ ├── pages/ # Các trang chính (Home, Book Detail, Admin, v.v.)
+│ │ ├── assets/ # Ảnh, icon, font
+│ │ ├── layouts/ # Cấu hình các khung của member/admin
+│ │ ├── data/ # Mockup data phụ vụ test frontend
+│ │ ├── services/ # Định nghĩa hàm truy xuất dữ liệu
+│ │ └── main.jsx # Điểm khởi đầu ứng dụng
+│ └── index.html # Khởi tạo root đầu tiên
+```
+
+---
+
+## 💻 Cài đặt & chạy thử
+
+### 1. Clone repository
+
 ```bash
 git clone https://github.com/your-username/bk-library.git
 cd bk-library
 ```
 
-2. Cài đặt các dependencies:
-```bash
-npm install
-```
+### 2. Cài đặt backend
 
-3. Chạy ứng dụng ở môi trường development:
 ```bash
+cd backend
+npm install
 npm run dev
 ```
 
-4. Mở trình duyệt và truy cập: `http://localhost:5173`
+Server mặc định chạy tại: [http://localhost:3000](http://localhost:3000)
 
-## Cấu trúc dự án
-
-```
-bk-library/
-├── public/                 # Tài nguyên tĩnh
-│   ├── books/              # Hình ảnh sách
-├── src/
-│   ├── assets/             # Tài nguyên của ứng dụng
-│   ├── components/         # Các component có thể tái sử dụng
-│   ├── data/               # Dữ liệu mẫu
-│   ├── layouts/            # Các layout component
-│   ├── pages/              # Các trang trong ứng dụng
-│   ├── App.jsx             # Component gốc của ứng dụng
-│   ├── index.css           # CSS global
-│   └── main.jsx            # Entry point
-├── .gitignore
-├── package.json
-├── tailwind.config.js      # Cấu hình Tailwind CSS
-├── vite.config.js          # Cấu hình Vite
-└── README.md
-```
-
-## Cách sử dụng
-
-### Trang chủ
-- Trang chủ hiển thị banner chào mừng và danh sách sách mới
-- Người dùng có thể nhấp vào "Xem thêm" để xem tất cả sách
-
-### Xem chi tiết sách
-- Nhấp vào bất kỳ sách nào để xem thông tin chi tiết
-- Trang chi tiết hiển thị bìa sách, tên sách, tác giả, đánh giá và mô tả
-
-### Lọc sách
-- Trên trang "Tất cả sách", người dùng có thể lọc sách theo danh mục
-- Các danh mục hiện có: Tất cả, Lập trình, Cơ sở dữ liệu, Web
-
-### Tìm kiếm sách
-- Sử dụng thanh tìm kiếm ở header để tìm sách theo tên
-
-## Deployment
-
-Để build ứng dụng cho production:
+### 3. Cài đặt frontend
 
 ```bash
+cd ../frontend
+npm install
+npm run dev
+```
+
+Frontend mặc định chạy tại: [http://localhost:5173](http://localhost:5173)
+
+---
+
+## 🔐 Ghi chú bảo mật
+
+Tất cả mật khẩu đều được mã hóa bằng thuật toán bcrypt trước khi lưu.
+
+Các endpoint yêu cầu xác thực sẽ kiểm tra JWT hợp lệ ở Authorization Header.
+
+---
+
+## 📦 Build cho production
+
+```bash
+cd frontend
 npm run build
 ```
 
-Kết quả build sẽ nằm trong thư mục `dist/` và có thể được deploy lên các dịch vụ hosting như Netlify, Vercel, hay Firebase Hosting.
+Kết quả sẽ nằm trong thư mục dist/ sẵn sàng để deploy lên Vercel, Netlify hoặc Firebase Hosting.
 
-## Giấy phép
+---
 
-[MIT](LICENSE)
+## 📃 License
+
+Phát hành theo giấy phép [MIT](LICENSE)
+
+---
+
+## ✨ Đóng góp
+
+Nếu bạn muốn đóng góp cho dự án, hãy tạo một pull request hoặc liên hệ với nhóm phát triển qua email.
